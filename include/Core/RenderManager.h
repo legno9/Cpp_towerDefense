@@ -27,13 +27,12 @@ class RenderManager
         ~RenderManager();
 
         void render();
-        void addToRenderQueue(sf::Drawable* drawable, ZOrder zOrder);
-        void removeFromRenderQueue(sf::Drawable* drawable, ZOrder zOrder);
+        bool addToRenderQueue(sf::Drawable* drawable, ZOrder zOrder);
+        bool removeFromRenderQueue(sf::Drawable* drawable, ZOrder zOrder);
         void clearRenderQueue();
 
     private:
 
-        void sortRenderQueue();
         
         sf::RenderWindow* m_window{ nullptr };
         
@@ -46,4 +45,8 @@ class RenderManager
         };
         
         std::vector<std::unique_ptr<renderLayer>> renderQueue{};
+
+        std::vector<sf::Drawable*>::iterator RenderManager::FindDrawable(sf::Drawable* drawable, const std::unique_ptr<renderLayer>& layer);
+
+        void sortRenderQueue();
 };

@@ -20,6 +20,7 @@ class AssetManager
 
 		sf::Texture* loadTexture(const char* assetPath);
 		// To-Do: Implement a unloadTexture()
+		// To-Do: Implement tilemaps loading
 
 		sf::Texture* getTexture(const char* assetPath) const;
 

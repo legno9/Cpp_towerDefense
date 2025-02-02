@@ -34,6 +34,9 @@ set(PROJECT_HEADERS
     include/Gameplay/GameObject.h
     include/Gameplay/Zombie.h
 
+    include/Gameplay/Turrets/TurretBase.h
+    include/Gameplay/Turrets/TurretShooter.h
+
     include/Render/SFMLOrthogonalLayer.h
 
     include/UI/UIScreenMainMenu.h
@@ -49,6 +52,9 @@ set(PROJECT_SOURCES
 
     src/Gameplay/Enemy.cpp
     src/Gameplay/Zombie.cpp
+
+    src/Gameplay/Turrets/TurretBase.cpp
+    src/Gameplay/Turrets/TurretShooter.cpp
 
     src/Render/SFMLOrthogonalLayer.cpp
 
@@ -87,16 +93,3 @@ if(WIN32)
         PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:${PROJECT_NAME}>
         VERBATIM)
 endif()
-
-
-# TO-DO 
-# - Sistema de torres, 2 tipos de torres. Una que dispara y otra que ralentiza. Colocarlo en el escenario. Estadisticas.
-# - Sistema de recursos con los que comprar torres y mejorarlas. Se obtiene de los enemigos.
-# - Sistema de proyectiles que surgen de las torres hacia los enemigos, 2 tipos de proyectiles.
-# - Sistema de interfaz de usuario con botones para comprar torres y mejorarlas.
-# - Sistema de pools
-# - Sistema de enemigos, 3 tipos de enemigos. Estadisticas. Recorrido.
-# - Sistema de oleadas
-# - Sistema de puntuacion
-# - Zona de la base, si un enemigo llega a la base se pierde vida. Sistema de vida.
-# - Pantalla de inicio, pausa, fin de juego.

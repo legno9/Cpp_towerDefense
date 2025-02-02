@@ -6,7 +6,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
-MouseManager::MouseManager(sf::RenderWindow *window, RenderManager* renderManager)
+MouseManager::MouseManager(sf::RenderWindow* window, RenderManager* renderManager)
 {
     assert(window != nullptr && renderManager != nullptr && "MouseManager::MouseManager() window is nullptr");
     m_window = window;
@@ -19,7 +19,7 @@ MouseManager::~MouseManager()
     m_tileIndicator = nullptr;
 }
 
-void MouseManager::setTowerLayer(MapLayer *towersLayer)
+void MouseManager::setTowerLayer(MapLayer* towersLayer)
 {
     assert(towersLayer != nullptr && "MouseManager::setTowerLayer() towersLayer or window is nullptr"); 
 

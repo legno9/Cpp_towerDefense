@@ -16,6 +16,7 @@ namespace tmx
 class MapLayer;
 class ObjectLayer;
 class RenderManager;
+class TurretBase;
 
 class World
 {
@@ -37,7 +38,7 @@ class World
 	private:
 
 		// This is just an example. Think a good way to group the actors of your game. If they need any type of manager, etc...
-		// Enemy* m_enemy{ nullptr };
+		TurretBase* m_turret{ nullptr };
 
 		// To-Do: This should be in its own class, something like "Level" should work
 		RenderManager* m_renderManager{ nullptr };

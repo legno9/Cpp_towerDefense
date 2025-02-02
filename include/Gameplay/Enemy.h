@@ -24,7 +24,6 @@ class Enemy : public GameObject
 		sf::FloatRect getBounds() const { return m_sprite.getGlobalBounds(); }
 
 		void update(float deltaMilliseconds) override;
-		void render(sf::RenderWindow& window) override;
 
 	protected:
 

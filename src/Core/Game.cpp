@@ -43,7 +43,6 @@ void Game::update(uint32_t deltaMilliseconds)
 			m_window->close();
 		}
 	}
-	
 	m_world->update(deltaMilliseconds);
 	m_mouseManager->update();
 }

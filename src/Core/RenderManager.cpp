@@ -5,7 +5,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 
 
-RenderManager::RenderManager(sf::RenderWindow *window)
+RenderManager::RenderManager(sf::RenderWindow* window)
 {
     assert(window != nullptr && "RenderManager::RenderManager() window is nullptr");
     m_window = window;
@@ -30,18 +30,24 @@ void RenderManager::render()
     }
 }
 
-void RenderManager::addToRenderQueue(sf::Drawable* drawable, ZOrder zOrder)
+bool RenderManager::addToRenderQueue(sf::Drawable* drawable, ZOrder zOrder)
 {
     assert(drawable != nullptr && "RenderManager::addToRender() drawable is nullptr");
 
-    auto it = std::find_if(renderQueue.begin(), renderQueue.end(), [zOrder](const std::unique_ptr<renderLayer>& layer)
+    auto layersIt = std::find_if(renderQueue.begin(), renderQueue.end(), [zOrder](const std::unique_ptr<renderLayer>& layer)
     {
         return layer->zOrder == zOrder;
     });
 
-    if (it != renderQueue.end())
+    if (layersIt != renderQueue.end())
     {
-        it->get()->drawables.push_back(drawable);
+        auto drawableIt = FindDrawable(drawable, *layersIt);
+        
+        if (drawableIt == layersIt->get()->drawables.end())
+        {
+            layersIt->get()->drawables.push_back(drawable);
+        }
+        else{return false;}
     }
     else
     {
@@ -50,6 +56,8 @@ void RenderManager::addToRenderQueue(sf::Drawable* drawable, ZOrder zOrder)
     }
 
     sortRenderQueue();
+
+    return true;
 }
 
 void RenderManager::sortRenderQueue()
@@ -60,24 +68,38 @@ void RenderManager::sortRenderQueue()
     });
 }
 
-void RenderManager::removeFromRenderQueue(sf::Drawable* drawable, ZOrder zOrder)
+bool RenderManager::removeFromRenderQueue(sf::Drawable* drawable, ZOrder zOrder)
 {
     assert(drawable != nullptr && "RenderManager::removeFromRenderQueue() drawable is nullptr");
 
-    auto it = std::find_if(renderQueue.begin(), renderQueue.end(), [zOrder](const std::unique_ptr<renderLayer>& layer)
+    auto layersIt = std::find_if(renderQueue.begin(), renderQueue.end(), [zOrder](const std::unique_ptr<renderLayer>& layer)
     {
         return layer->zOrder == zOrder;
     });
 
-    if (it != renderQueue.end())
+    if (layersIt != renderQueue.end())
     {
-        auto drawableIt = std::find(it->get()->drawables.begin(), it->get()->drawables.end(), drawable);
-        if (drawableIt != it->get()->drawables.end())
+        auto drawableIt = FindDrawable(drawable, *layersIt);
+        
+        if (drawableIt != layersIt->get()->drawables.end())
         {
-            it->get()->drawables.erase(drawableIt);
+            layersIt->get()->drawables.erase(drawableIt);
+            return true;
         }
+        
+        return false;
     }
+
+    return false;
 }
+
+std::vector<sf::Drawable*>::iterator RenderManager::FindDrawable(sf::Drawable* drawable, const std::unique_ptr<renderLayer>& layer)
+{
+    auto drawableIt = std::find(layer->drawables.begin(), layer->drawables.end(), drawable);
+
+    return drawableIt;
+}
+
 
 void RenderManager::clearRenderQueue()
 {
