@@ -1,0 +1,13 @@
+{
+  "texturePath": "./data/Turrets/tower_ninja_gun_0-0.png",
+  "damage": 10.0,
+  "areaDamage": 0.0,
+  "areaDamageRange": 0.0,
+  "actionRange": 200.0,
+  "actionRate": 1.0,
+  "buyPrice": 100,
+  "sellPrice": 50,
+  "upgradePrice": 150,
+  "flags": ["Sellable", "SingleTargetDamage"],
+  "maxLevel": 3
+}

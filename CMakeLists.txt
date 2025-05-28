@@ -23,9 +23,12 @@ FetchContent_MakeAvailable(TMXLITE)
 
 set(PROJECT_HEADERS 
     include/Utils/Constants.h
+    include/Utils/json.hpp
 
+    include/Core/AnimationComponent.h
     include/Core/AssetManager.h
     include/Core/GameObjectManager.h
+    include/Core/JsonManager.h
     include/Core/GameManager.h
     include/Core/MouseManager.h
     include/Core/RenderManager.h
@@ -45,8 +48,10 @@ set(PROJECT_HEADERS
 
 set(PROJECT_SOURCES 
 
+    src/Core/AnimationComponent.cpp
     src/Core/AssetManager.cpp
     src/Core/GameObjectManager.cpp
+    src/Core/JsonManager.cpp
     src/Core/GameManager.cpp
     src/Core/MouseManager.cpp
     src/Core/RenderManager.cpp
@@ -101,7 +106,6 @@ endif()
 # - Sistema de recursos con los que comprar torres y mejorarlas. Se obtiene de los enemigos.
 # - Sistema de proyectiles que surgen de las torres hacia los enemigos, 2 tipos de proyectiles.
 # - Sistema de interfaz de usuario con botones para comprar torres y mejorarlas.
-# - Sistema de pools
 # - Sistema de enemigos, 3 tipos de enemigos. Estadisticas. Recorrido.
 # - Sistema de oleadas
 # - Sistema de puntuacion

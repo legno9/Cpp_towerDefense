@@ -1,5 +1,6 @@
 #include "Core/GameObjectManager.h"
 #include <cassert>
+#include <iostream>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "Core/RenderManager.h"
 #include "Gameplay/GameObject.h"
@@ -21,21 +22,28 @@ void GameObjectManager::newGameObject(GameObjectType type, const sf::Vector2f& p
 {
     std::unique_ptr<GameObject> newObject = nullptr;
 
-    switch (type)
+    try
     {
-        case GameObjectType::Enemy:
-            break;
-        case GameObjectType::ShooterTurret:
-            newObject = std::make_unique<TurretShooter>(position, m_renderManager);
-            break;
-        case GameObjectType::None:
-        default:
-            break;
-    }
+        switch (type)
+        {
+            case GameObjectType::Enemy:
+                break;
+            case GameObjectType::ShooterTurret:
+                newObject = std::make_unique<TurretShooter>(position, m_renderManager);
+                break;
+            case GameObjectType::None:
+            default:
+                break;
+        }
 
     assert((newObject != nullptr) && "GameObjectManager::newGameObject: newObject is nullptr, type not recognized");
-
     m_gameObjects.push_back(std::move(newObject));
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Error creating new game object: " << e.what() << std::endl;
+        return;
+    }
 }
 
 void GameObjectManager::destroyGameObject()
