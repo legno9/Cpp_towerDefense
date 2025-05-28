@@ -1,50 +1,58 @@
 #include <Core/AssetManager.h>
+#include <memory>
+#include <iostream>
 #include <SFML/Graphics/Texture.hpp>
 
-
-AssetManager* AssetManager::s_instance{ nullptr };
-
-AssetManager* AssetManager::getInstance()
+AssetManager& AssetManager::getInstance()
 {
-	if (s_instance == nullptr)
-	{
-		s_instance = new AssetManager();
-	}
-	return s_instance;
+    static AssetManager instance;
+    return instance;
 }
 
-AssetManager::~AssetManager()
-{
-	for (auto it : m_texturePathToTexture)
-	{
-		delete it.second;
-	}
-}
-
-sf::Texture* AssetManager::loadTexture(const char* assetPath)
+sf::Texture& AssetManager::loadTexture(const std::string& assetPath)
 {
 	auto it = m_texturePathToTexture.find(assetPath);
 
 	if (it != m_texturePathToTexture.end())
 	{
-		return it->second; // Already loaded, reuse
+		return *it->second;
 	}
 	else
 	{
-		sf::Texture* newTexture = new sf::Texture();
-		const bool loadOk = newTexture->loadFromFile(assetPath);
-		if (!loadOk)
+		auto newTexture = std::make_unique<sf::Texture>();
+		if (!newTexture->loadFromFile(assetPath)) 
 		{
-			delete newTexture;
-			return nullptr;
+			std::cerr << "ERROR: Failed to load texture: " << assetPath << std::endl;
+			throw std::runtime_error("Failed to get texture: " + assetPath);
 		}
-		m_texturePathToTexture[assetPath] = newTexture;
-		return newTexture; // just created a new one
+
+        sf::Texture* rawPtr = newTexture.get();
+        m_texturePathToTexture[assetPath] = std::move(newTexture);
+        return *rawPtr;
 	}
 }
 
-sf::Texture* AssetManager::getTexture(const char* assetPath) const
+sf::Texture& AssetManager::getTexture(const std::string& assetPath) const
 {
 	const auto it = m_texturePathToTexture.find(assetPath);
-	return (it != m_texturePathToTexture.end()) ? it->second : nullptr;
+	if (it == m_texturePathToTexture.end())
+	{
+		std::cerr << "ERROR: Failed to get texture: " << assetPath << std::endl;
+		throw std::runtime_error("Failed to get texture: " + assetPath);
+	}
+	return *it->second;
+}
+
+void AssetManager::unloadTexture(const std::string& assetPath)
+{
+	auto it = m_texturePathToTexture.find(assetPath);
+	if (it != m_texturePathToTexture.end())
+	{
+		m_texturePathToTexture.erase(it);
+	}
+	else
+	{
+		std::cerr << "ERROR: Failed to unload texture: " << assetPath << std::endl;
+		throw std::runtime_error("Failed to load texture: " + assetPath);
+	}
 }

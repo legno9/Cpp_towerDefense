@@ -1,91 +1,64 @@
-#include <Core/RenderManager.h>
 #include <Gameplay/Turrets/TurretBase.h>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <Core/AssetManager.h>
+#include <Core/RenderManager.h>
+#include <iostream>
 
-bool TurretBase::init(const TurretInfo &TurretInfo, RenderManager *renderManager)
+TurretBase::TurretBase(const sf::Vector2f& position, const std::string& texturePath, const TurretConfig& config, RenderManager& renderManager)
+    : GameObject(position.x, position.y)
+    , m_renderManager(renderManager)
 {
-    if (TurretInfo.texture == nullptr || renderManager == nullptr)
+    try
     {
-        return false;
+        m_currentTexture = &AssetManager::getInstance().loadTexture(texturePath);
+        m_sprite.setTexture(*m_currentTexture);
+        m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2, m_sprite.getLocalBounds().height / 2);
+        m_sprite.setPosition(m_position);
+    }
+    catch (const std::runtime_error& e)
+    {
+        m_currentTexture = nullptr;
+        std::cerr << "Error loading texture for turret: " << e.what() << std::endl;
     }
 
-    m_sprite.setTexture(*TurretInfo.texture);
-    m_sprite.setPosition(TurretInfo.position);
+    applyConfig(config);
 
-    m_damage = TurretInfo.damage;
-    m_areaDamage = TurretInfo.areaDamage;
-    m_actionRange = TurretInfo.actionRange;
-    m_actionRate = TurretInfo.actionRate;
-    m_actionTimer = m_actionRate;
-    m_buyPrice = TurretInfo.buyPrice;
-    m_sellPrice = TurretInfo.sellPrice;
-    m_upgradePrice = TurretInfo.upgradePrice;
-    m_flags = TurretInfo.flags;
+    m_actionTimer = 0.0f;
+    m_level = 1;
 
-    m_renderManager = renderManager;
-
-    buy();
-
-    return true;
+    m_renderManager.addToRenderQueue(m_sprite, ZOrder::Foreground);
 }
 
-void TurretBase::update(float deltaMilliseconds)
+void TurretBase::applyConfig(const TurretConfig& config)
 {
-    // printf("a %f ",m_sprite.getPosition().x);
-    m_actionTimer -= deltaMilliseconds;
-    if (m_actionTimer <= .0f)
+    m_damage = config.damage;
+    m_areaDamage = config.areaDamage;
+    m_actionRange = config.actionRange;
+    m_actionRate = config.actionRate;
+    m_buyPrice = config.buyPrice;
+    m_sellPrice = config.sellPrice;
+    m_upgradePrice = config.upgradePrice;
+    m_flags = config.flags;
+    m_maxLevel = config.maxLevel;
+}
+
+void TurretBase::update(float deltaTime)
+{
+    m_actionTimer += deltaTime;
+    if (m_actionTimer >= m_actionRate)
     {
         action();
-        m_actionTimer = m_actionRate;
+        m_actionTimer = 0.0f;
     }
+}
+
+void TurretBase::upgrade(const TurretConfig& newLevelConfig)
+{
+
 }
 
 void TurretBase::action()
 {
-
+    
 }
-
-void TurretBase::buy()
-{
-    m_renderManager->addToRenderQueue(&m_sprite, ZOrder::Foreground);
-}
-
-void TurretBase::sell()
-{
-    m_renderManager->removeFromRenderQueue(&m_sprite, ZOrder::Foreground);
-}
-
-void TurretBase::upgrade (const TurretInfo &TurretInfo)
-{
-    if (m_level >= m_maxLevel || TurretInfo.texture == nullptr)
-    {
-        return;
-    }
-
-    m_sprite.setTexture(*TurretInfo.texture);
-    m_damage = TurretInfo.damage;
-    m_areaDamage = TurretInfo.areaDamage;
-    m_actionRange = TurretInfo.actionRange;
-    m_actionRate = TurretInfo.actionRate;
-    m_actionTimer = m_actionRate;
-    m_upgradePrice = TurretInfo.buyPrice;
-    m_sellPrice = TurretInfo.sellPrice;
-
-    m_level++;
-
-    if (m_level >= m_maxLevel)
-    {
-        isMaxLevel = true;
-        m_flags = m_flags & ~TurretFlags::Upgradeable;
-    }
-}
-
-
-void TurretBase::CreateDefaultUpgradeInfo(TurretInfo *TurretInfo) const
-{
-    TurretInfo->areaDamage *= defaultMultiplier;
-    TurretInfo->damage *= defaultMultiplier;
-    TurretInfo->actionRate *= defaultMultiplier;
-    TurretInfo->sellPrice *= defaultMultiplier;
-    TurretInfo->upgradePrice += TurretInfo->upgradePrice;
-}
-

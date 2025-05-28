@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 namespace sf
 {
@@ -12,22 +13,21 @@ class AssetManager
 {
 	public:
 
-		static AssetManager* getInstance();
+		static AssetManager& getInstance();
 
-		~AssetManager();
 
-		// To-Do: Implement a clear()
+		sf::Texture& loadTexture(const std::string& assetPath);
+		sf::Texture& getTexture(const std::string& assetPath) const;
 
-		sf::Texture* loadTexture(const char* assetPath);
-		// To-Do: Implement a unloadTexture()
-		// To-Do: Implement tilemaps loading
-
-		sf::Texture* getTexture(const char* assetPath) const;
-
+		void unloadTexture(const std::string& assetPath);
 
 	private:
 
-		static AssetManager* s_instance;
+		AssetManager() = default;
+		~AssetManager() = default;
 
-		std::unordered_map<std::string, sf::Texture*> m_texturePathToTexture;
+		AssetManager(const AssetManager&) = delete;
+		AssetManager& operator=(const AssetManager&) = delete;
+
+		std::unordered_map<std::string, std::unique_ptr<sf::Texture>> m_texturePathToTexture;
 };

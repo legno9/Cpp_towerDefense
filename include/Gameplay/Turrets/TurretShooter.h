@@ -7,10 +7,12 @@ class TurretShooter: public TurretBase
 {
     public:
 
-        TurretShooter(RenderManager* renderManager);
+        // TurretShooter(const sf::Vector2f& position, const std::string& texturePath, const TurretConfig& config, RenderManager& renderManager);
+        TurretShooter(const sf::Vector2f& position, RenderManager& renderManager);
+        TurretConfig createTemporaryTurretConfig();
+
         ~TurretShooter() override = default;
 
-    private:
+        void action() override;
 
-        TurretBase::TurretInfo m_shooterTowerInfo;
 };

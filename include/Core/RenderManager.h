@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <map>
+#include <functional>
 
 namespace sf
 {
@@ -23,30 +25,27 @@ class RenderManager
 {
     public:
     
-        RenderManager(sf::RenderWindow* window);
+        RenderManager(sf::RenderWindow& window);
         ~RenderManager();
 
         void render();
-        bool addToRenderQueue(sf::Drawable* drawable, ZOrder zOrder);
-        bool removeFromRenderQueue(sf::Drawable* drawable, ZOrder zOrder);
+        bool addToRenderQueue(sf::Drawable& drawable, ZOrder zOrder);
+        bool removeFromRenderQueue(sf::Drawable& drawable, ZOrder zOrder);
         void clearRenderQueue();
 
     private:
 
-        
-        sf::RenderWindow* m_window{ nullptr };
+        sf::RenderWindow& m_window;
         
         struct renderLayer
         {
-            std::vector <sf::Drawable*> drawables;
+            std::vector<std::reference_wrapper<sf::Drawable>> drawables;
             ZOrder zOrder;
 
-            renderLayer(std::vector<sf::Drawable*> drawableList, ZOrder order) : drawables(drawableList), zOrder(order) {}
+            // renderLayer(std::vector<sf::Drawable*> drawableList, ZOrder order) : drawables(drawableList), zOrder(order) {}
+            renderLayer(sf::Drawable& drawable) : drawables{std::ref(drawable)} {}
         };
         
-        std::vector<std::unique_ptr<renderLayer>> renderQueue{};
-
-        std::vector<sf::Drawable*>::iterator RenderManager::FindDrawable(sf::Drawable* drawable, const std::unique_ptr<renderLayer>& layer);
-
-        void sortRenderQueue();
+        // std::vector<std::unique_ptr<renderLayer>> m_renderLayers{};
+        std::map<ZOrder, std::unique_ptr<renderLayer>> m_renderLayers;
 };

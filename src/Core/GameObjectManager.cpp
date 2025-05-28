@@ -1,0 +1,44 @@
+#include "Core/GameObjectManager.h"
+#include <cassert>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include "Core/RenderManager.h"
+#include "Gameplay/GameObject.h"
+#include "Gameplay/Turrets/TurretShooter.h"
+
+GameObjectManager::GameObjectManager(RenderManager& renderManager)
+    : m_renderManager(renderManager)
+{}
+
+void GameObjectManager::updateGameObjects(uint32_t deltaMiliseconds)
+{
+    for (const auto& obj : m_gameObjects)
+    {
+        obj->update(deltaMiliseconds);
+    }
+}
+
+void GameObjectManager::newGameObject(GameObjectType type, const sf::Vector2f& position)
+{
+    std::unique_ptr<GameObject> newObject = nullptr;
+
+    switch (type)
+    {
+        case GameObjectType::Enemy:
+            break;
+        case GameObjectType::ShooterTurret:
+            newObject = std::make_unique<TurretShooter>(position, m_renderManager);
+            break;
+        case GameObjectType::None:
+        default:
+            break;
+    }
+
+    assert((newObject != nullptr) && "GameObjectManager::newGameObject: newObject is nullptr, type not recognized");
+
+    m_gameObjects.push_back(std::move(newObject));
+}
+
+void GameObjectManager::destroyGameObject()
+{
+
+}

@@ -1,98 +1,85 @@
 #pragma once
-#include <Gameplay/GameObject.h>
+
+#include <string>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Sprite.hpp> 
+#include <SFML/Graphics/Texture.hpp>
+#include <Gameplay/GameObject.h>
 
 class RenderManager;
+
+enum class TurretFlags : uint8_t
+{
+    None = 0,
+    Sellable = 1 << 1,
+    Upgradeable = 1 << 2,
+    AreaDamage = 1 << 3,
+    SingleTargetDamage = 1 << 4,
+    SlowOnHit = 1 << 5,
+    StuntOnHit = 1 << 6,
+};
+
+inline TurretFlags operator|(TurretFlags a, TurretFlags b)
+{ return static_cast<TurretFlags>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b)); }
+
+inline TurretFlags operator&(TurretFlags a, TurretFlags b)
+{ return static_cast<TurretFlags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b)); }
+
+inline TurretFlags operator~(TurretFlags a)
+{ return static_cast<TurretFlags>(~static_cast<uint8_t>(a)); }
+
+struct TurretConfig
+{
+    std::string texturePath;
+    float damage;
+    float areaDamage;
+    float areaDamageRange;
+    float actionRange;
+    float actionRate;
+    int buyPrice;
+    int sellPrice;
+    int upgradePrice;
+    TurretFlags flags;
+    int maxLevel;
+};
 
 class TurretBase: public GameObject
 {
     public:
-		~TurretBase() override = default;
+        TurretBase(const sf::Vector2f& position, const std::string& texturePath, const TurretConfig& config, RenderManager& renderManager);
+        ~TurretBase() override = default;
 
 		sf::FloatRect getBounds() const { return m_sprite.getGlobalBounds(); }
 
 		void update(float deltaMilliseconds) override;
-        void sell();
-        void buy();
+
+        void upgrade(const TurretConfig& newLevelConfig);
         virtual void action();
 
-        bool isMaxLevel = false;
+        bool isMaxLevel() const { return m_level >= m_maxLevel; }
 
 	protected:
 
-        enum class TurretFlags: uint8_t
-        {
-            None = 0,
-            Sellable = 1 << 1,
-            Upgradeable = 1 << 2,
-            AreaDamage = 1 << 3,
-            SingleTargetDamage = 1 << 4,
-            SlowOnHit = 1 << 5,
-            StuntOnHit = 1 << 6,
-            //...
-        };
+        sf::Sprite m_sprite;
+        sf::Texture* m_currentTexture = nullptr;
 
-        struct TurretInfo
-        {
-            sf::Vector2f position{ .0f, .0f };
-			sf::Texture* texture{ nullptr };
+        float m_damage;
+        float m_areaDamage;
+        float m_actionRange;
+        float m_actionRate;
 
-            float damage{ .0f };
-            float areaDamage{ .0f };
-            float areaDamageRange{ .0f };
-            float actionRange{ .0f };
-            float actionRate{ .0f };
+        int m_buyPrice;
+        int m_sellPrice;
+        int m_upgradePrice;
 
-            int8_t buyPrice{ 0 };
-            int8_t sellPrice{ 0 };
-            int8_t upgradePrice{ 0 };
+        TurretFlags m_flags;
 
-            TurretFlags flags{ TurretFlags::None };
-        };
+        float m_actionTimer;
+        int m_level;
+        int m_maxLevel;
 
-		sf::Sprite m_sprite;
-        float m_damage{ .0f };
-        float m_areaDamage{ .0f };
-        float m_actionRange{ .0f };
-        float m_actionRate{ .0f };
+        RenderManager& m_renderManager;
 
-        int8_t m_buyPrice{ 0 };
-        int8_t m_sellPrice{ 0 };
-        int8_t m_upgradePrice{ 0 };
-
-        TurretFlags m_flags{ TurretFlags::None };
-
-        void CreateDefaultUpgradeInfo(TurretInfo* towerInfo) const; 
-
-        friend TurretFlags operator|(TurretFlags a, TurretFlags b)
-        {
-            return static_cast<TurretFlags>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
-        }
-
-        friend TurretFlags operator&(TurretFlags a, TurretFlags b)
-        {
-            return static_cast<TurretFlags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
-        }
-
-        friend TurretFlags operator~(TurretFlags a)
-        {
-            return static_cast<TurretFlags>(~static_cast<uint8_t>(a));
-        }
-
-    public:
-
-        bool init(const TurretInfo& TurretInfo, RenderManager* renderManager);
-        void upgrade(const TurretInfo &TurretInfo);
-
-    private:
-
-        RenderManager* m_renderManager{ nullptr };
-
-        float m_actionTimer{ .0f };
-        int8_t m_level{ 1 };
-        int8_t m_maxLevel{ 3 };   
-
-        float defaultMultiplier{ 1.5f }; 
+        void applyConfig(const TurretConfig& config);
 
 };
