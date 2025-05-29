@@ -12,7 +12,7 @@ bool Enemy::init(const EnemyDescriptor& enemyDescriptor)
 	return true;
 }
 
-void Enemy::update(float deltaMilliseconds)
+void Enemy::update(uint32_t deltaMilliseconds)
 {
 	m_sprite.setPosition(m_position);
 }

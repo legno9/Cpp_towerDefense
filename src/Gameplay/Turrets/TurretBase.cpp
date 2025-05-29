@@ -6,14 +6,14 @@
 #include <Core/RenderManager.h>
 #include <Core/JsonManager.h>
 
-
 TurretBase::TurretBase(const sf::Vector2f& position, const std::string& configPath, RenderManager& renderManager)
     : GameObject(position.x, position.y)
     , m_renderManager(renderManager)
 {
     nlohmann::json turretJson = JsonManager::getInstance().loadConfigFile(configPath);
 
-    if (turretJson.is_null() || turretJson.empty()) {
+    if (turretJson.is_null() || turretJson.empty()) 
+    {
         std::cerr << "ERROR: Failed to load or parse turret config: " << configPath << std::endl;
         throw std::runtime_error("Invalid turret config file.");
     }
@@ -21,32 +21,22 @@ TurretBase::TurretBase(const sf::Vector2f& position, const std::string& configPa
     applyConfig(turretJson);
 
     m_sprite = std::make_unique<sf::Sprite>();
+
+    std::string animationPath = JsonManager::getInstance().getString(turretJson, "animationDataPath");
+    float scale = JsonManager::getInstance().getFloat(turretJson, "spriteScale");
     
-    try
-    {
-        std::string texturePath = JsonManager::getInstance().getString(turretJson, "texturePath");
-        m_currentTexture = &AssetManager::getInstance().loadTexture(texturePath);
-        m_sprite->setTexture(*m_currentTexture);
-        m_sprite->setOrigin(m_sprite->getLocalBounds().width / 2, m_sprite->getLocalBounds().height / 2);
-        m_sprite->setPosition(m_position);
-    }
-    catch (const std::runtime_error& e)
-    {
-        m_currentTexture = nullptr;
-        std::cerr << "Error loading texture for turret: " << e.what() << std::endl;
-    }
+    m_animationComponent = std::make_unique<AnimationComponent>(*m_sprite, animationPath);
+    m_animationComponent->play("idle");
+    m_animationComponent->setDirection(Direction::North);
+
+    m_sprite->setOrigin(m_sprite->getLocalBounds().width / 2, m_sprite->getLocalBounds().height / 2);
+    m_sprite->setPosition(m_position);
+    m_sprite->setScale(scale,scale);
 
     m_actionTimer = 0.0f;
     m_level = 1;
 
-    if (m_sprite->getTexture() == nullptr)
-    {
-        std::cerr << "WARNING: TurretBase created but its sprite is either invalid or has no texture. It will not be rendered." << std::endl;\
-        return;
-    }
-
     m_renderManager.addToRenderQueue(*m_sprite, ZOrder::Foreground);
- 
 }
 
 TurretBase::~TurretBase()
@@ -91,9 +81,11 @@ void TurretBase::applyConfig(const nlohmann::json& configData)
     }
 }
 
-void TurretBase::update(float deltaTime)
+void TurretBase::update(uint32_t deltaMilliseconds)
 {
-    m_actionTimer += deltaTime;
+    m_animationComponent->update(deltaMilliseconds);
+
+    m_actionTimer += deltaMilliseconds;
     if (m_actionTimer >= m_actionRate)
     {
         action();

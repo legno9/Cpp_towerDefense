@@ -8,7 +8,7 @@ bool Zombie::init(const ZombieDescriptor& zombieDescriptor)
 	return Enemy::init(zombieDescriptor);
 }
 
-void Zombie::update(float deltaMilliseconds)
+void Zombie::update(uint32_t deltaMilliseconds)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{

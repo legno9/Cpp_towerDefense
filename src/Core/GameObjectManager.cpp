@@ -29,15 +29,18 @@ void GameObjectManager::newGameObject(GameObjectType type, const sf::Vector2f& p
             case GameObjectType::Enemy:
                 break;
             case GameObjectType::ShooterTurret:
-                newObject = std::make_unique<TurretShooter>(position, m_renderManager);
+                newObject = std::make_unique<TurretShooter>(position, "./data/Config/Turrets/turretShooterConfig.json", m_renderManager);
                 break;
             case GameObjectType::None:
             default:
+                std::cerr << "WARNING: GameObjectManager::newGameObject: Attempted to create unknown GameObjectType: " << static_cast<int>(type) << std::endl;
                 break;
         }
 
-    assert((newObject != nullptr) && "GameObjectManager::newGameObject: newObject is nullptr, type not recognized");
-    m_gameObjects.push_back(std::move(newObject));
+        if (newObject != nullptr)
+        {
+            m_gameObjects.push_back(std::move(newObject));
+        }
     }
     catch (const std::exception& e)
     {

@@ -1,0 +1,111 @@
+{
+  "texturePath": "./data/Turrets/tower_ninja_gun_0-0.png",
+  "defaultFrameWidth": 48,  
+  "defaultFrameHeight": 48,
+
+  "animations": 
+  {
+    "idle_south": 
+    {
+      "name": "idle_south",
+      "loop": true,
+      "frames": 
+      [
+        { "row": 0, "col": 0, "duration": 0.5 },
+        { "row": 0, "col": 1, "duration": 0.5 }
+      ]
+    },
+    "shoot_south": 
+    {
+      "name": "shoot_south",
+      "loop": false,
+      "frames": 
+      [
+        { "row": 0, "col": 2, "duration": 0.1 },
+        { "row": 0, "col": 3, "duration": 0.1 },
+        { "row": 0, "col": 4, "duration": 0.1 },
+        { "row": 0, "col": 5, "duration": 0.1 },
+        { "row": 0, "col": 6, "duration": 0.1 },
+        { "row": 0, "col": 7, "duration": 0.1 },
+        { "row": 0, "col": 8, "duration": 0.1 }
+      ]
+    },
+    "idle_east": 
+    {
+      "name": "idle_east",
+      "loop": true,
+      "frames": 
+      [
+        { "row": 1, "col": 0, "duration": 0.5 },
+        { "row": 1, "col": 1, "duration": 0.5 }
+      ]
+    },
+    "shoot_east": 
+    {
+      "name": "shoot_east",
+      "loop": false,
+      "frames": 
+      [
+        { "row": 1, "col": 2, "duration": 0.1 },
+        { "row": 1, "col": 3, "duration": 0.1 },
+        { "row": 1, "col": 4, "duration": 0.1 },
+        { "row": 1, "col": 5, "duration": 0.1 },
+        { "row": 1, "col": 6, "duration": 0.1 },
+        { "row": 1, "col": 7, "duration": 0.1 },
+        { "row": 1, "col": 8, "duration": 0.1 }
+      ]
+    },
+    "idle_west": 
+    {
+      "name": "idle_west",
+      "loop": true,
+      "frames": 
+      [
+        { "row": 2, "col": 0, "duration": 0.5 },
+        { "row": 2, "col": 1, "duration": 0.5 }
+      ]
+    },
+    "shoot_west": 
+    {
+      "name": "shoot_west",
+      "loop": false,
+      "frames": 
+      [
+        { "row": 2, "col": 2, "duration": 0.1 },
+        { "row": 2, "col": 3, "duration": 0.1 },
+        { "row": 2, "col": 4, "duration": 0.1 },
+        { "row": 2, "col": 5, "duration": 0.1 },
+        { "row": 2, "col": 6, "duration": 0.1 },
+        { "row": 2, "col": 7, "duration": 0.1 },
+        { "row": 2, "col": 8, "duration": 0.1 }
+      ]
+    },
+    "idle_north": 
+    {
+      "name": "idle_north",
+      "loop": true,
+      "frames": 
+      [
+        { "row": 3, "col": 0, "duration": 0.5 },
+        { "row": 3, "col": 1, "duration": 0.5 }
+      ]
+    },
+    "shoot_north": 
+    {
+      "name": "shoot_north",
+      "loop": false,
+      "frames": 
+      [
+        { "row": 3, "col": 2, "duration": 0.1 },
+        { "row": 3, "col": 3, "duration": 0.1 },
+        { "row": 3, "col": 4, "duration": 0.1 },
+        { "row": 3, "col": 5, "duration": 0.1 },
+        { "row": 3, "col": 6, "duration": 0.1 },
+        { "row": 3, "col": 7, "duration": 0.1 },
+        { "row": 3, "col": 8, "duration": 0.1 }
+
+      ]
+    }
+
+  }
+}

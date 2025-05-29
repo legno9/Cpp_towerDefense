@@ -7,7 +7,7 @@ class TurretShooter: public TurretBase
 {
     public:
 
-        TurretShooter(const sf::Vector2f& position, RenderManager& renderManager);
+        TurretShooter(const sf::Vector2f& position, const std::string& configPath, RenderManager& renderManager);
 
         ~TurretShooter() override = default;
 

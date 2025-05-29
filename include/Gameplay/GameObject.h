@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/System/Vector2.hpp>
+#include <cstdint>
 
 
 class GameObject
@@ -15,7 +16,7 @@ class GameObject
 		sf::Vector2f& getPosition() { return m_position; }
 		void setPosition(const sf::Vector2f& newPosition) { m_position = newPosition; }
 
-		virtual void update(float delta) = 0;
+		virtual void update(uint32_t deltaMilliseconds) = 0;
 
 	protected:
 

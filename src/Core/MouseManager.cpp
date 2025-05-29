@@ -88,10 +88,13 @@ void MouseManager::update()
 
     if (currentTile.ID == m_nullTileID)
     {
-        m_tileIndicator->setPosition(tileCoordinates.x * m_currentTileSize.x , tileCoordinates.y * m_currentTileSize.y );
+        sf::Vector2f worldTilePosition (tileCoordinates.x * m_currentTileSize.x, tileCoordinates.y * m_currentTileSize.y);
+        m_tileIndicator->setPosition(worldTilePosition);
+        
         if (isLeftClicked)
         {
-            m_gameManager.onTileClicked(m_worldPos);
+            sf::Vector2f wordlTileCenter = worldTilePosition + sf::Vector2f(m_currentTileSize.x / 2.0f, m_currentTileSize.y / 2.0f);
+            m_gameManager.onTileClicked(wordlTileCenter);
         }
     }
     else

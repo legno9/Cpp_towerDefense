@@ -1,0 +1,138 @@
+#include <Animation/AnimationComponent.h>
+#include <iostream>
+#include <cmath>
+
+AnimationComponent::AnimationComponent(sf::Sprite& targetSprite, const std::string& animationConfigPath)
+    : m_targetSprite(targetSprite),
+      m_isPlaying(false),
+      m_currentTime(0.0f),
+      m_currentFrameIndex(0),
+      m_currentAnimation(nullptr),
+      m_currentDirection(Direction::South)
+{
+    m_animationData = &AnimationDataManager::getInstance().getSpriteSheetData(animationConfigPath);
+    
+    m_spriteSheetTexture = &AnimationDataManager::getInstance().getSpriteSheetTexture(m_animationData->texturePath);
+    m_targetSprite.setTexture(*m_spriteSheetTexture);
+}
+
+void AnimationComponent::update(uint32_t deltaMilliseconds)
+{
+    if (!m_isPlaying || !m_currentAnimation || m_currentAnimation->frames.empty()) return;
+
+    float deltaSeconds = static_cast<float>(deltaMilliseconds) / 1000.0f;
+    m_currentTime += deltaSeconds;
+
+    if (m_currentTime >= m_currentAnimation->totalDuration)
+    {
+        if (m_currentAnimation->loop)
+        {
+            m_currentTime = fmod(m_currentTime, m_currentAnimation->totalDuration); 
+        }
+        else
+        {
+            m_isPlaying = false;
+            m_currentTime = m_currentAnimation->totalDuration;
+            m_currentFrameIndex = m_currentAnimation->frames.size() - 1;
+            
+            m_targetSprite.setTextureRect(m_currentAnimation->frames[m_currentFrameIndex].textureRect);
+
+            return;
+        }
+    }
+
+    float runningTime = 0.0f;
+    for (size_t i = 0; i < m_currentAnimation->frames.size(); ++i)
+    {
+        runningTime += m_currentAnimation->frames[i].duration;
+        if (m_currentTime < runningTime)
+        {
+            m_currentFrameIndex = i;
+            break;
+        }
+        if (i == m_currentAnimation->frames.size() - 1) {
+            m_currentFrameIndex = i;
+        }
+    }
+
+    m_targetSprite.setTextureRect(m_currentAnimation->frames[m_currentFrameIndex].textureRect);
+}
+
+void AnimationComponent::play(const std::string& animationName, bool forceRestart)
+{
+    std::string actualAnimationName = getAnimationNameForDirection(animationName, m_currentDirection);
+
+    if (m_currentAnimationName == actualAnimationName && m_isPlaying && !forceRestart)
+    {
+        return;
+    }
+
+    auto it = m_animationData->animations.find(actualAnimationName);
+    if (it == m_animationData->animations.end())
+    {
+        std::cerr << "ERROR: Animation '" << actualAnimationName << "' not found for spritesheet " << m_animationData->texturePath << std::endl;
+        m_isPlaying = false;
+        m_currentAnimation = nullptr;
+        throw std::runtime_error("Failed to find animation: " + actualAnimationName);
+    }
+
+    m_currentAnimation = &it->second;
+    m_currentAnimationName = actualAnimationName;
+    m_currentTime = 0.0f;
+    m_currentFrameIndex = 0;
+    m_isPlaying = true;
+
+    if (!m_currentAnimation->frames.empty())
+    {
+        m_targetSprite.setTextureRect(m_currentAnimation->frames[m_currentFrameIndex].textureRect);
+    }
+    else
+    {
+        std::cerr << "WARNING: Animation '" << actualAnimationName << "' has no frames." << std::endl;
+        m_isPlaying = false;
+        throw std::runtime_error("Animation: " + actualAnimationName + " has no frames.");
+    }
+}
+
+void AnimationComponent::stop()
+{
+    m_isPlaying = false;
+    m_currentTime = 0.0f;
+    m_currentFrameIndex = 0;
+}
+
+void AnimationComponent::setDirection(Direction direction)
+{
+    if (m_currentDirection == direction) return;
+
+    m_currentDirection = direction;
+    
+    if (m_isPlaying && m_currentAnimation) 
+    {
+        std::string baseName;
+        
+        size_t last_underscore = m_currentAnimationName.find_last_of('_');
+        if (last_underscore != std::string::npos) 
+        {
+            baseName = m_currentAnimationName.substr(0, last_underscore);
+        } else 
+        {
+            baseName = m_currentAnimationName; 
+        }
+        play(baseName, true);
+    }
+}
+
+std::string AnimationComponent::getAnimationNameForDirection(const std::string& baseAnimationName, Direction direction) const
+{
+    std::string directionSuffix;
+    switch (direction) {
+        case Direction::South: directionSuffix = "south"; break;
+        case Direction::North: directionSuffix = "north"; break;
+        case Direction::East: directionSuffix = "east"; break;
+        case Direction::West: directionSuffix = "west"; break;
+        case Direction::None:
+        default: return baseAnimationName;
+    }
+    return baseAnimationName + "_" + directionSuffix;
+}

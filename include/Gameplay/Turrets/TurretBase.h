@@ -6,6 +6,7 @@
 #include <SFML/Graphics/Sprite.hpp> 
 #include <Utils/json.hpp>
 #include <Gameplay/GameObject.h>
+#include <Animation/AnimationComponent.h>
 
 namespace sf
 {
@@ -60,7 +61,7 @@ class TurretBase: public GameObject
 
         sf::FloatRect getBounds() const { return m_sprite.get()->getGlobalBounds(); }
 
-        void update(float deltaMilliseconds) override;
+        void update(uint32_t deltaMilliseconds) override;
 
         void upgrade(const TurretConfig& newLevelConfig);
         virtual void action();
@@ -69,7 +70,6 @@ class TurretBase: public GameObject
 
     protected:
         std::unique_ptr<sf::Sprite> m_sprite;
-        sf::Texture* m_currentTexture = nullptr;
 
         float m_damage{0.0f};
         float m_areaDamage{0.0f};
@@ -87,6 +87,7 @@ class TurretBase: public GameObject
         int m_maxLevel{0};
 
         RenderManager& m_renderManager;
+        std::unique_ptr<AnimationComponent> m_animationComponent;
 
         void applyConfig(const nlohmann::json& json);
 

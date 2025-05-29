@@ -14,7 +14,7 @@ class Zombie : public Enemy
 
 		bool init(const ZombieDescriptor& enemyDescriptor);
 
-		void update(float deltaMilliseconds) override;
+		void update(uint32_t deltaMilliseconds) override;
 
 
 	private:

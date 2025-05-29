@@ -25,7 +25,7 @@ set(PROJECT_HEADERS
     include/Utils/Constants.h
     include/Utils/json.hpp
 
-    include/Core/AnimationComponent.h
+    include/Core/AnimationDataManager.h
     include/Core/AssetManager.h
     include/Core/GameObjectManager.h
     include/Core/JsonManager.h
@@ -33,6 +33,8 @@ set(PROJECT_HEADERS
     include/Core/MouseManager.h
     include/Core/RenderManager.h
     include/Core/World.h
+
+    include/Animation/AnimationComponent.h
 
     include/Gameplay/Enemy.h
     include/Gameplay/GameObject.h
@@ -48,7 +50,7 @@ set(PROJECT_HEADERS
 
 set(PROJECT_SOURCES 
 
-    src/Core/AnimationComponent.cpp
+    src/Core/AnimationDataManager.cpp
     src/Core/AssetManager.cpp
     src/Core/GameObjectManager.cpp
     src/Core/JsonManager.cpp
@@ -56,6 +58,8 @@ set(PROJECT_SOURCES
     src/Core/MouseManager.cpp
     src/Core/RenderManager.cpp
     src/Core/World.cpp
+
+    src/Animation/AnimationComponent.cpp
 
     src/Gameplay/Enemy.cpp
     src/Gameplay/Zombie.cpp

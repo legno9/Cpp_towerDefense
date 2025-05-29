@@ -7,7 +7,6 @@ JsonManager& JsonManager::getInstance()
     return instance;
 }
 
-
 nlohmann::json JsonManager::loadConfigFile(const std::string& filePath)
 {
     auto it = m_loadedConfigs.find(filePath);
@@ -20,16 +19,16 @@ nlohmann::json JsonManager::loadConfigFile(const std::string& filePath)
     std::ifstream file(filePath);
     if (!file.is_open())
     {
-        std::cerr << "ERROR: DataManager failed to load config file: " << filePath << std::endl;
+        std::cerr << "ERROR: JsonManager failed to load config file: " << filePath << std::endl;
         throw std::runtime_error("Failed to load config file: " + filePath);
     }
 
     nlohmann::json jsonData;
 
     try { file >> jsonData; } 
-
-    catch (const nlohmann::json::parse_error& e) {
-        std::cerr << "ERROR: DataManager failed to parse JSON file " << filePath << std::endl;
+    catch (const nlohmann::json::parse_error& e) 
+    {
+        std::cerr << "ERROR: JsonManager failed to parse JSON file " << filePath << std::endl;
         throw std::runtime_error("Failed to parse JSON file: " + filePath + " - " + e.what());
     }
 
@@ -70,7 +69,7 @@ bool JsonManager::getBool(const nlohmann::json& jsonData, const std::string& key
     {
         return jsonData[key].get<bool>();
     }
-    // También puedes considerar strings "true"/"false" si lo deseas
+    
     if (jsonData.contains(key) && jsonData[key].is_string()) {
         std::string val = jsonData[key].get<std::string>();
         std::transform(val.begin(), val.end(), val.begin(), ::tolower);
