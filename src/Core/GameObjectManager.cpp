@@ -6,10 +6,13 @@
 #include "Gameplay/GameObject.h"
 #include "Gameplay/Turrets/TurretShooter.h"
 #include "Gameplay/Enemies/EnemyBasic.h"
-// #include "Gameplay/Turrets/Projectiles/ProjectilShooter.h"
+// #include "Gameplay/Turrets/Projectiles/ProjectileShooter.h"
 
-GameObjectManager::GameObjectManager()
-{}
+GameObjectManager& GameObjectManager::getInstance()
+{
+    static GameObjectManager instance;
+    return instance;
+}
 
 void GameObjectManager::updateGameObjects(uint32_t deltaMiliseconds)
 {

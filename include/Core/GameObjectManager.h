@@ -11,10 +11,9 @@ class EnemyBase;
 
 class GameObjectManager
 {
-	
 	public:
-		GameObjectManager();
-    	~GameObjectManager() = default;
+		
+		static GameObjectManager& getInstance();
 
 		void updateGameObjects(uint32_t deltaMilliseconds);
 
@@ -27,6 +26,12 @@ class GameObjectManager
 		void checkGameObjectsMarkedForRemoval();
 
 	private:
+		
+		GameObjectManager() = default;
+    	~GameObjectManager() = default;
+
+		GameObjectManager(const GameObjectManager&) = delete;
+    	GameObjectManager& operator=(const GameObjectManager&) = delete;
 
 		std::vector<std::unique_ptr<GameObject>> m_gameObjects {};
 };

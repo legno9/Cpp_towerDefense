@@ -9,8 +9,13 @@
 #include <Gameplay/World.h>
 
 
-GameManager::~GameManager() = default;
 GameManager::GameManager() = default;
+
+GameManager::~GameManager()
+{
+    RenderManager::removeInstance();
+};
+
 
 bool GameManager::init(const std::string& configPath)
 {
@@ -50,8 +55,7 @@ bool GameManager::init(const std::string& configPath)
 	
 	RenderManager::initialize(*m_window);
 	m_mouseManager = std::make_unique<MouseManager>(*m_window, *this);
-	m_gameObjectManager = std::make_unique<GameObjectManager>();
-	m_world = std::make_unique<World>(*m_gameObjectManager);
+	m_world = std::make_unique<World>();
 
 	bool loadOk = false;
     if (m_world) 
@@ -102,7 +106,7 @@ void GameManager::update(uint32_t deltaMilliseconds)
 
 	m_mouseManager->update();
 	m_world->update(deltaMilliseconds);
-	m_gameObjectManager->updateGameObjects(deltaMilliseconds);
+	GameObjectManager::getInstance().updateGameObjects(deltaMilliseconds);
 }
 
 void GameManager::render()
@@ -117,6 +121,6 @@ void GameManager::render()
 void GameManager::onTileClicked(sf::Vector2f mousePosition)
 {
 	assert(m_world != nullptr && "GameManager::onTileClicked() world is nullptr");
-	m_gameObjectManager->spawnTurret(GameObjectType::ShooterTurret, static_cast<sf::Vector2f>(mousePosition));
+	GameObjectManager::getInstance().spawnTurret(GameObjectType::ShooterTurret, static_cast<sf::Vector2f>(mousePosition));
 	m_world->startCurrentLevelWaves();
 }

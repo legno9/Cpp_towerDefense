@@ -27,6 +27,7 @@ class RenderManager
 
         static RenderManager& getInstance();
         static void initialize(sf::RenderWindow& window);
+        static void RenderManager::removeInstance();
         
         void render();
         bool addToRenderQueue(sf::Drawable& drawable, ZOrder zOrder);

@@ -43,8 +43,7 @@ void from_json(const nlohmann::json& j, Wave& p)
     p.currentSpawnGroupIndex = 0;
 }
 
-Level::Level(GameObjectManager& gameObjectManager)
-    :m_gameObjectManager(gameObjectManager)
+Level::Level()
 {}
 
 Level::~Level()
@@ -107,7 +106,7 @@ void Level::spawnEnemy(GameObjectType type, const std::string& configPath)
     
     sf::Vector2f offScreenSpawnPos = firstPathPoint - initialSegmentDirection * m_spawnDistanceOffScreen;
 
-    m_gameObjectManager.spawnEnemy(type, offScreenSpawnPos, configPath, m_enemyPathPoints);
+    GameObjectManager::getInstance().spawnEnemy(type, offScreenSpawnPos, configPath, m_enemyPathPoints);
 }
 
 bool Level::load(const std::string& levelFilePath)

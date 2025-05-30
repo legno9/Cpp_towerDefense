@@ -42,13 +42,12 @@ namespace tmx
 }
 
 class MapLayer;
-class GameObjectManager;
 
 class Level
 {
 public:
     
-    Level(GameObjectManager& gameObjectManager);
+    Level();
     ~Level();
 
     bool load(const std::string& levelFilePath);
@@ -61,7 +60,6 @@ public:
     void startLevelWaves() { m_levelWavesStart = true; }
 
 private:
-    GameObjectManager& m_gameObjectManager;
 
     std::unique_ptr<tmx::Map> m_map {nullptr};
     std::unique_ptr<MapLayer> m_layerZero {nullptr};

@@ -3,7 +3,6 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 
-
 RenderManager* RenderManager::s_instance = nullptr;
 
 RenderManager::RenderManager(sf::RenderWindow& window)
@@ -13,6 +12,19 @@ RenderManager::RenderManager(sf::RenderWindow& window)
 RenderManager::~RenderManager()
 {
     clearRenderQueue();
+}
+
+void RenderManager::removeInstance() 
+{
+    if (s_instance != nullptr) 
+    {
+        delete s_instance;
+        s_instance = nullptr;
+    } 
+    else 
+    {
+        std::cerr << "WARNING: RenderManager::shutdown() called without instance initialized." << std::endl;
+    }
 }
 
 
