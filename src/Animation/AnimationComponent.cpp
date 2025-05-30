@@ -1,6 +1,7 @@
 #include <Animation/AnimationComponent.h>
 #include <iostream>
 #include <cmath>
+#include <corecrt_math_defines.h>
 
 AnimationComponent::AnimationComponent(sf::Sprite& targetSprite, const std::string& animationConfigPath)
     : m_targetSprite(targetSprite),
@@ -123,6 +124,37 @@ void AnimationComponent::setDirection(Direction direction)
     }
 }
 
+void AnimationComponent::SetDirectionFromVector(const sf::Vector2f& vector)
+{
+    if (vector.x == 0.0f && vector.y == 0.0f) 
+    {
+        setDirection(Direction::South);
+        return;
+    }
+
+    float angle = std::atan2(vector.y, vector.x) * 180.0f / M_PI;
+    Direction direction;
+
+    if (angle >= -45.0f && angle < 45.0f) 
+    {
+        direction =  Direction::East;
+    } 
+    else if (angle >= 45.0f && angle < 135.0f) 
+    {
+        direction = Direction::South;
+    } 
+    else if (angle >= 135.0f || angle < -135.0f) 
+    { 
+        direction = Direction::West;
+    } 
+    else 
+    { 
+        direction = Direction::North;
+    }
+
+    setDirection(direction);
+}
+
 std::string AnimationComponent::getAnimationNameForDirection(const std::string& baseAnimationName, Direction direction) const
 {
     std::string directionSuffix;
@@ -136,3 +168,4 @@ std::string AnimationComponent::getAnimationNameForDirection(const std::string& 
     }
     return baseAnimationName + "_" + directionSuffix;
 }
+

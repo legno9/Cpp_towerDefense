@@ -38,38 +38,22 @@ inline TurretFlags operator&(TurretFlags a, TurretFlags b)
 inline TurretFlags operator~(TurretFlags a)
 { return static_cast<TurretFlags>(~static_cast<uint8_t>(a)); }
 
-struct TurretConfig
-{
-    std::string texturePath;
-    float damage;
-    float areaDamage;
-    float areaDamageRange;
-    float actionRange;
-    float actionRate;
-    int buyPrice;
-    int sellPrice;
-    int upgradePrice;
-    TurretFlags flags;
-    int maxLevel;
-};
-
 class TurretBase: public GameObject
 {
     public:
         TurretBase(const sf::Vector2f& position, const std::string& configPath, RenderManager& renderManager);
         ~TurretBase() override;
 
-        sf::FloatRect getBounds() const { return m_sprite.get()->getGlobalBounds(); }
-
         void update(uint32_t deltaMilliseconds) override;
 
-        void upgrade(const TurretConfig& newLevelConfig);
+        void upgrade(const nlohmann::json& json);
+        void sell();
         virtual void action();
 
         bool isMaxLevel() const { return m_level >= m_maxLevel; }
 
     protected:
-        std::unique_ptr<sf::Sprite> m_sprite;
+        std::unique_ptr<sf::Sprite> m_sprite {nullptr};
 
         float m_damage{0.0f};
         float m_areaDamage{0.0f};
@@ -87,7 +71,7 @@ class TurretBase: public GameObject
         int m_maxLevel{0};
 
         RenderManager& m_renderManager;
-        std::unique_ptr<AnimationComponent> m_animationComponent;
+        std::unique_ptr<AnimationComponent> m_animationComponent {nullptr};
 
         void applyConfig(const nlohmann::json& json);
 

@@ -8,6 +8,7 @@ namespace sf
 {
     class RenderWindow;
     class RectangleShape;
+    class color;
 }
 
 class MapLayer;

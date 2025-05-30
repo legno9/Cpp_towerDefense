@@ -1,0 +1,31 @@
+{
+  "mapFilePath": "data/Levels/Level_01.tmx",
+  "enemyPathLayerName": "PathLayerPoints",
+  "towerLayerIndex": 1,
+  "waves": [
+    {
+      "waveNumber": 1,
+      "delayBeforeWave": 2.0,
+      "spawns": [
+        {
+          "type": "BasicEnemy",
+          "configPath": "data/Config/Enemies/enemyBasicConfig.json",
+          "spawnInterval": 0.5,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "waveNumber": 2,
+      "delayBeforeWave": 10.0,
+      "spawns": [
+        {
+          "type": "BasicEnemy",
+          "configPath": "data/Config/Enemies/enemyBasicConfig.json",
+          "spawnInterval": 0.5,
+          "count": 8
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "levelSequence": [
+    {
+      "id": "level_01",
+      "name": "The Green Fields",
+      "configPath": "data/Config/Levels/level_01.json"
+    }
+  ]
+}

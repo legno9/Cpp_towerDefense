@@ -1,0 +1,7 @@
+{
+  "health": 100.0,
+  "speed": 50.0,
+  "goldValue": 10,
+  "spriteScale": 1.25,
+  "animationDataPath": "data/Animations/Enemies/enemyBasicAnim.json"
+}

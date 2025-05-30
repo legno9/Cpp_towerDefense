@@ -1,7 +1,5 @@
 #include <Gameplay/Turrets/TurretBase.h>
 #include <iostream>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Texture.hpp>
 #include <Core/AssetManager.h>
 #include <Core/RenderManager.h>
 #include <Core/JsonManager.h>
@@ -27,7 +25,7 @@ TurretBase::TurretBase(const sf::Vector2f& position, const std::string& configPa
     
     m_animationComponent = std::make_unique<AnimationComponent>(*m_sprite, animationPath);
     m_animationComponent->play("idle");
-    m_animationComponent->setDirection(Direction::North);
+    m_animationComponent->setDirection(Direction::South);
 
     m_sprite->setOrigin(m_sprite->getLocalBounds().width / 2, m_sprite->getLocalBounds().height / 2);
     m_sprite->setPosition(m_position);
@@ -83,7 +81,10 @@ void TurretBase::applyConfig(const nlohmann::json& configData)
 
 void TurretBase::update(uint32_t deltaMilliseconds)
 {
-    m_animationComponent->update(deltaMilliseconds);
+    if (m_animationComponent)
+    {
+        m_animationComponent->update(deltaMilliseconds);
+    }
 
     m_actionTimer += deltaMilliseconds;
     if (m_actionTimer >= m_actionRate)
@@ -93,7 +94,7 @@ void TurretBase::update(uint32_t deltaMilliseconds)
     }
 }
 
-void TurretBase::upgrade(const TurretConfig& newLevelConfig)
+void TurretBase::upgrade(const nlohmann::json& json)
 {
 
 }
@@ -101,4 +102,10 @@ void TurretBase::upgrade(const TurretConfig& newLevelConfig)
 void TurretBase::action()
 {
     
+}
+
+void TurretBase::sell()
+{
+    m_markedForRemoval = true;
+    std::cout << "Turret sold for: " << m_sellPrice << " gold." << std::endl;
 }

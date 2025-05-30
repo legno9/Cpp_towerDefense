@@ -1,20 +1,14 @@
 
 #include <cstdio>
-#include <Core/GameManager.h>
 #include <SFML/System/Clock.hpp>
-#include <Utils/Constants.h>
+#include <Core/GameManager.h>
+#include <Utils/Common.h>
+
 
 int main()
 {
-    // To-Do: Load game config from file instead of hardcoding values in code
-    GameManager::GameCreateInfo gameCI;
-    gameCI.gameTitle = GAME_TITLE;
-    gameCI.screenWidth = 960u;
-    gameCI.screenHeight = 540u;
-    gameCI.frameRateLimit = 60u;
-
     GameManager game;
-    const bool gameInitialized = game.init(gameCI);
+    const bool gameInitialized = game.init("data/Config/gameConfig.json");
 
     if (gameInitialized == false)
     {

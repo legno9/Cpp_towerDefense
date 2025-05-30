@@ -22,7 +22,7 @@ FetchContent_MakeAvailable(TMXLITE)
 
 
 set(PROJECT_HEADERS 
-    include/Utils/Constants.h
+    include/Utils/Common.h
     include/Utils/json.hpp
 
     include/Core/AnimationDataManager.h
@@ -32,13 +32,15 @@ set(PROJECT_HEADERS
     include/Core/GameManager.h
     include/Core/MouseManager.h
     include/Core/RenderManager.h
-    include/Core/World.h
-
+    
     include/Animation/AnimationComponent.h
 
-    include/Gameplay/Enemy.h
+    include/Gameplay/World.h
+    include/Gameplay/Level.h
     include/Gameplay/GameObject.h
-    include/Gameplay/Zombie.h
+    
+    include/Gameplay/Enemies/EnemyBase.h
+    include/Gameplay/Enemies/EnemyBasic.h
 
     include/Gameplay/Turrets/TurretBase.h
     include/Gameplay/Turrets/TurretShooter.h
@@ -57,12 +59,14 @@ set(PROJECT_SOURCES
     src/Core/GameManager.cpp
     src/Core/MouseManager.cpp
     src/Core/RenderManager.cpp
-    src/Core/World.cpp
-
+    
     src/Animation/AnimationComponent.cpp
 
-    src/Gameplay/Enemy.cpp
-    src/Gameplay/Zombie.cpp
+    src/Gameplay/World.cpp
+    src/Gameplay/Level.cpp
+
+    src/Gameplay/Enemies/EnemyBase.cpp
+    src/Gameplay/Enemies/EnemyBasic.cpp
 
     src/Gameplay/Turrets/TurretBase.cpp
     src/Gameplay/Turrets/TurretShooter.cpp
@@ -107,11 +111,12 @@ endif()
 
 # TO-DO 
 # - Sistema de torres, 2 tipos de torres. Una que dispara y otra que ralentiza. Colocarlo en el escenario. Estadisticas.
-# - Sistema de recursos con los que comprar torres y mejorarlas. Se obtiene de los enemigos.
-# - Sistema de proyectiles que surgen de las torres hacia los enemigos, 2 tipos de proyectiles.
-# - Sistema de interfaz de usuario con botones para comprar torres y mejorarlas.
 # - Sistema de enemigos, 3 tipos de enemigos. Estadisticas. Recorrido.
-# - Sistema de oleadas
-# - Sistema de puntuacion
+# - Sistema de proyectiles que surgen de las torres hacia los enemigos, 2 tipos de proyectiles.
+
+# - Sistema de recursos con los que comprar torres y mejorarlas. Se obtiene de los enemigos.
 # - Zona de la base, si un enemigo llega a la base se pierde vida. Sistema de vida.
+# - Sistema de puntuacion
+
+# - Sistema de interfaz de usuario con botones para comprar torres y mejorarlas.
 # - Pantalla de inicio, pausa, fin de juego.

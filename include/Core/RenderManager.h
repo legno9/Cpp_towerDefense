@@ -39,13 +39,11 @@ class RenderManager
         
         struct renderLayer
         {
-            std::vector<std::reference_wrapper<sf::Drawable>> drawables;
+            std::vector<std::reference_wrapper<sf::Drawable>> drawables {};
             ZOrder zOrder;
 
-            // renderLayer(std::vector<sf::Drawable*> drawableList, ZOrder order) : drawables(drawableList), zOrder(order) {}
             renderLayer(sf::Drawable& drawable) : drawables{std::ref(drawable)} {}
         };
         
-        // std::vector<std::unique_ptr<renderLayer>> m_renderLayers{};
-        std::map<ZOrder, std::unique_ptr<renderLayer>> m_renderLayers;
+        std::map<ZOrder, std::unique_ptr<renderLayer>> m_renderLayers {};
 };

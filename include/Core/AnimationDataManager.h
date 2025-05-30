@@ -9,25 +9,25 @@
 
 struct AnimationFrame
 {
-    sf::IntRect textureRect;
-    float duration;         
+    sf::IntRect textureRect {0, 0, 0, 0}; 
+    float duration {0.0f};         
 };
 
 struct Animation
 {
-    std::string name;
-    std::vector<AnimationFrame> frames;
-    bool loop;               
-    float totalDuration;     
+    std::string name {};
+    std::vector<AnimationFrame> frames {};
+    bool loop {false};               
+    float totalDuration {0.0f};     
 };
 
 
 struct SpriteSheetAnimationData
 {
-    std::string texturePath;
-    int defaultFrameWidth;   
-    int defaultFrameHeight;  
-    std::map<std::string, Animation> animations;
+    std::string texturePath {};
+    int defaultFrameWidth {0};   
+    int defaultFrameHeight {0};  
+    std::map<std::string, Animation> animations {};
 };
 
 
@@ -49,6 +49,6 @@ private:
     AnimationDataManager(const AnimationDataManager&) = delete;
     AnimationDataManager& operator=(const AnimationDataManager&) = delete;
 
-    std::map<std::string, SpriteSheetAnimationData> m_loadedAnimationData;
-    std::map<std::string, sf::Texture*> m_loadedSpriteSheetTextures;
+    std::map<std::string, SpriteSheetAnimationData> m_loadedAnimationData {};
+    std::map<std::string, sf::Texture*> m_loadedSpriteSheetTextures {};
 };

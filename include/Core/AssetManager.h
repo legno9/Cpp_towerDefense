@@ -15,7 +15,6 @@ class AssetManager
 
 		static AssetManager& getInstance();
 
-
 		sf::Texture& loadTexture(const std::string& assetPath);
 		sf::Texture& getTexture(const std::string& assetPath) const;
 

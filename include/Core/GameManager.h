@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <SFML/System/Vector2.hpp>
+#include <Gameplay/World.h>
 
 namespace sf
 {
@@ -18,17 +19,17 @@ class GameManager
 {
 	public:
 
-		struct GameCreateInfo //Other file
+		struct GameCreateInfo
 		{
-			std::string gameTitle;
-			uint32_t screenWidth;
-			uint32_t screenHeight;
-			uint32_t frameRateLimit;
+			std::string gameTitle {};
+			uint32_t screenWidth {0};
+			uint32_t screenHeight {0};
+			uint32_t frameRateLimit {0};
 		};
 		GameManager();
 		~GameManager();
 
-		bool init(GameCreateInfo& createInfo);
+		bool init(const std::string& configPath);
 
 		bool isRunning() const;
 
@@ -39,9 +40,11 @@ class GameManager
 
 	private:
 
-		std::unique_ptr<sf::RenderWindow> m_window;
-		std::unique_ptr<MouseManager> m_mouseManager;
-		std::unique_ptr<RenderManager> m_renderManager;
-		std::unique_ptr<World> m_world;
-		std::unique_ptr<GameObjectManager> m_gameObjectManager;
+		std::unique_ptr<sf::RenderWindow> m_window {nullptr};
+		std::unique_ptr<MouseManager> m_mouseManager {nullptr};
+		std::unique_ptr<RenderManager> m_renderManager {nullptr};
+		std::unique_ptr<World> m_world {nullptr};
+		std::unique_ptr<GameObjectManager> m_gameObjectManager {nullptr};
+
+		bool initializeManagers();
 };

@@ -25,5 +25,5 @@ private:
     JsonManager(const JsonManager&) = delete;
     JsonManager& operator=(const JsonManager&) = delete;
 
-    std::map<std::string, nlohmann::json> m_loadedConfigs;
+    std::map<std::string, nlohmann::json> m_loadedConfigs {};
 };

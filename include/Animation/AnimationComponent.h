@@ -3,14 +3,7 @@
 #include <functional> 
 #include <SFML/Graphics/Sprite.hpp>
 #include <Core/AnimationDataManager.h>
-
-enum class Direction : uint8_t {
-    South,
-    North,          
-    East,         
-    West,         
-    None
-};
+#include <Utils/Common.h>
 
 class AnimationComponent
 {
@@ -23,19 +16,20 @@ public:
     void stop();
 
     void setDirection(Direction direction);
+    void SetDirectionFromVector(const sf::Vector2f& vector);
 
 private:
     sf::Sprite& m_targetSprite; 
-    sf::Texture* m_spriteSheetTexture; 
+    sf::Texture* m_spriteSheetTexture { nullptr }; 
 
-    const SpriteSheetAnimationData* m_animationData;
-    const Animation* m_currentAnimation;
+    const SpriteSheetAnimationData* m_animationData { nullptr };
+    const Animation* m_currentAnimation { nullptr };
 
-    std::string m_currentAnimationName;
-    bool m_isPlaying;
-    float m_currentTime;
-    int m_currentFrameIndex;
+    std::string m_currentAnimationName { };
+    bool m_isPlaying { false };
+    float m_currentTime { 0.0f };
+    int m_currentFrameIndex { 0 };
 
-    Direction m_currentDirection;
+    Direction m_currentDirection { Direction::None };
     std::string getAnimationNameForDirection(const std::string& baseAnimationName, Direction direction) const;
 };
