@@ -4,9 +4,8 @@
 #include <Core/RenderManager.h>
 #include <Core/JsonManager.h>
 
-TurretBase::TurretBase(const sf::Vector2f& position, const std::string& configPath, RenderManager& renderManager)
+TurretBase::TurretBase(const sf::Vector2f& position, const std::string& configPath)
     : GameObject(position.x, position.y)
-    , m_renderManager(renderManager)
 {
     nlohmann::json turretJson = JsonManager::getInstance().loadConfigFile(configPath);
 
@@ -34,14 +33,14 @@ TurretBase::TurretBase(const sf::Vector2f& position, const std::string& configPa
     m_actionTimer = 0.0f;
     m_level = 1;
 
-    m_renderManager.addToRenderQueue(*m_sprite, ZOrder::Foreground);
+    RenderManager::getInstance().addToRenderQueue(*m_sprite, ZOrder::Foreground);
 }
 
 TurretBase::~TurretBase()
 {
     if (m_sprite)
     {
-        m_renderManager.removeFromRenderQueue(*m_sprite, ZOrder::Foreground);
+        RenderManager::getInstance().removeFromRenderQueue(*m_sprite, ZOrder::Foreground);
     }
 }
 
@@ -81,6 +80,8 @@ void TurretBase::applyConfig(const nlohmann::json& configData)
 
 void TurretBase::update(uint32_t deltaMilliseconds)
 {
+    if (m_markedForRemoval) return;
+    
     if (m_animationComponent)
     {
         m_animationComponent->update(deltaMilliseconds);

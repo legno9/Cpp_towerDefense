@@ -1,0 +1,6 @@
+{
+  "texturePath": "data/Projectiles/bullet.png",
+  "speed": 600.0,
+  "rotationSpeed": 300.0,
+  "spriteScale": 1.5
+}

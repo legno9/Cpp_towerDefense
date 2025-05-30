@@ -3,6 +3,9 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 
+
+RenderManager* RenderManager::s_instance = nullptr;
+
 RenderManager::RenderManager(sf::RenderWindow& window)
     : m_window(window)
 {}
@@ -10,6 +13,29 @@ RenderManager::RenderManager(sf::RenderWindow& window)
 RenderManager::~RenderManager()
 {
     clearRenderQueue();
+}
+
+
+void RenderManager::initialize(sf::RenderWindow& window) 
+{
+    if (s_instance == nullptr) 
+    {
+        s_instance = new RenderManager(window);
+    } 
+    else 
+    {
+        std::cerr << "WARNING: RenderManager::initialize() called more than once." << std::endl;
+    }
+}
+
+RenderManager& RenderManager::getInstance() 
+{
+    if (s_instance == nullptr) 
+    {
+        std::cerr << "ERROR: RenderManager::getInstance() called before initialize()." << std::endl;
+        throw std::runtime_error("RenderManager not initialized!");
+    }
+    return *s_instance;
 }
 
 void RenderManager::render()

@@ -12,13 +12,12 @@ namespace sf
 }
 
 class MapLayer;
-class RenderManager;
 class GameManager;
 class MouseManager
 {
     public:
 
-        MouseManager(sf::RenderWindow& window, RenderManager& renderManager, GameManager& gameManager);
+        MouseManager(sf::RenderWindow& window, GameManager& gameManager);
         ~MouseManager();
 
         void update();
@@ -30,7 +29,6 @@ class MouseManager
     private:
         static constexpr unsigned int m_nullTileID{ 0 };
 
-        RenderManager& m_renderManager;
         GameManager& m_gameManager;
         sf::RenderWindow& m_window;
         

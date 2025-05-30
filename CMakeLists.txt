@@ -44,6 +44,10 @@ set(PROJECT_HEADERS
 
     include/Gameplay/Turrets/TurretBase.h
     include/Gameplay/Turrets/TurretShooter.h
+    include/Gameplay/Turrets/Projectiles/ProjectileBase.h
+    include/Gameplay/Turrets/Projectiles/ProjectileShooter.h
+    include/Gameplay/Turrets/Projectiles/ProjectileSlowness.h
+    include/Gameplay/Turrets/Projectiles/ProjectileAreaDamage.h
 
     include/Render/SFMLOrthogonalLayer.h
 
@@ -70,6 +74,11 @@ set(PROJECT_SOURCES
 
     src/Gameplay/Turrets/TurretBase.cpp
     src/Gameplay/Turrets/TurretShooter.cpp
+    
+    src/Gameplay/Turrets/Projectiles/ProjectileBase.cpp
+    src/Gameplay/Turrets/Projectiles/ProjectileShooter.cpp
+    src/Gameplay/Turrets/Projectiles/ProjectileSlowness.cpp
+    src/Gameplay/Turrets/Projectiles/ProjectileAreaDamage.cpp
 
     src/Render/SFMLOrthogonalLayer.cpp
 
@@ -110,8 +119,8 @@ if(WIN32)
 endif()
 
 # TO-DO 
-# - Sistema de torres, 2 tipos de torres. Una que dispara y otra que ralentiza. Colocarlo en el escenario. Estadisticas.
-# - Sistema de enemigos, 3 tipos de enemigos. Estadisticas. Recorrido.
+# - 3 tipos de torres.
+# - 3 tipos de enemigos.
 # - Sistema de proyectiles que surgen de las torres hacia los enemigos, 2 tipos de proyectiles.
 
 # - Sistema de recursos con los que comprar torres y mejorarlas. Se obtiene de los enemigos.

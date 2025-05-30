@@ -3,9 +3,8 @@
 #include <stdexcept>
 #include <Core/JsonManager.h>
 
-World::World(RenderManager& renderManager, GameObjectManager& gameObjectManager)
-    : m_renderManager(renderManager),
-      m_gameObjectManager(gameObjectManager)
+World::World(GameObjectManager& gameObjectManager)
+    :m_gameObjectManager(gameObjectManager)
 {
     try 
 	{
@@ -66,7 +65,7 @@ bool World::loadLevel(const std::string& levelId)
     }
     std::string levelConfigPath = it->second;
 
-    m_currentLevel = std::make_unique<Level>(m_renderManager, m_gameObjectManager);
+    m_currentLevel = std::make_unique<Level>(m_gameObjectManager);
     try 
 	{
         m_currentLevel->load(levelConfigPath);

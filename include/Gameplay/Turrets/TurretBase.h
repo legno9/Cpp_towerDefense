@@ -13,8 +13,6 @@ namespace sf
     class texture;
 }
 
-class RenderManager;
-
 enum class TurretFlags : uint8_t
 {
     None = 0,
@@ -41,7 +39,7 @@ inline TurretFlags operator~(TurretFlags a)
 class TurretBase: public GameObject
 {
     public:
-        TurretBase(const sf::Vector2f& position, const std::string& configPath, RenderManager& renderManager);
+        TurretBase(const sf::Vector2f& position, const std::string& configPath);
         ~TurretBase() override;
 
         void update(uint32_t deltaMilliseconds) override;
@@ -70,7 +68,6 @@ class TurretBase: public GameObject
         int m_level{0};
         int m_maxLevel{0};
 
-        RenderManager& m_renderManager;
         std::unique_ptr<AnimationComponent> m_animationComponent {nullptr};
 
         void applyConfig(const nlohmann::json& json);

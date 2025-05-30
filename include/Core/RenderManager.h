@@ -24,10 +24,10 @@ enum class ZOrder : std::int8_t
 class RenderManager
 {
     public:
-    
-        RenderManager(sf::RenderWindow& window);
-        ~RenderManager();
 
+        static RenderManager& getInstance();
+        static void initialize(sf::RenderWindow& window);
+        
         void render();
         bool addToRenderQueue(sf::Drawable& drawable, ZOrder zOrder);
         bool removeFromRenderQueue(sf::Drawable& drawable, ZOrder zOrder);
@@ -35,7 +35,14 @@ class RenderManager
 
     private:
 
+        ~RenderManager();
+        RenderManager(sf::RenderWindow& window);
+        
+        RenderManager(const RenderManager&) = delete;
+        RenderManager& operator=(const RenderManager&) = delete;
+
         sf::RenderWindow& m_window;
+        static RenderManager* s_instance;
         
         struct renderLayer
         {

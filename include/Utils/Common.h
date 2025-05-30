@@ -11,6 +11,9 @@ enum class GameObjectType: uint8_t
     ShooterTurret,
 	AreaDamageTurret,
 	SlownessTurret,
+    ShooterProjectile,
+    AreaDamageProjectile,
+    SlownessProjectile
 };
 
 enum class Direction : uint8_t 

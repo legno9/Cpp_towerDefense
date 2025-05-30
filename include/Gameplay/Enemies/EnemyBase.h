@@ -8,14 +8,11 @@
 #include <Animation/AnimationComponent.h>
 #include <Gameplay/GameObject.h>
 
-class RenderManager;
-
 class EnemyBase : public GameObject
 {
 public:
     
-    EnemyBase(const sf::Vector2f& initialPosition, const std::string& configPath,
-              RenderManager& renderManager,const std::vector<sf::Vector2f>& pathPoints);
+    EnemyBase(const sf::Vector2f& initialPosition, const std::string& configPath,const std::vector<sf::Vector2f>& pathPoints);
     ~EnemyBase() override;
 
     void update(uint32_t deltaTime) override;
@@ -31,7 +28,6 @@ protected:
 
     std::unique_ptr<sf::Sprite> m_sprite { nullptr };
     std::unique_ptr<AnimationComponent> m_animationComponent { nullptr };
-    RenderManager& m_renderManager;
 
     std::vector<sf::Vector2f> m_pathPoints { };
     int m_currentPathIndex { 0 };               

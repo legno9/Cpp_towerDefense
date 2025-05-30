@@ -7,13 +7,13 @@
 #include <Gameplay/GameObject.h>
 #include <Utils/Common.h>
 
-class RenderManager;
+class EnemyBase;
 
 class GameObjectManager
 {
 	
 	public:
-		GameObjectManager(RenderManager& renderManager);
+		GameObjectManager();
     	~GameObjectManager() = default;
 
 		void updateGameObjects(uint32_t deltaMilliseconds);
@@ -21,12 +21,12 @@ class GameObjectManager
 		GameObject* spawnTurret(GameObjectType type, const sf::Vector2f& position);
 		GameObject* spawnEnemy(GameObjectType type, const sf::Vector2f& spawnPosition, 
 			const std::string& configPath, const std::vector<sf::Vector2f>& pathPoints);
+		GameObject* spawnProjectile(GameObjectType projectileType, const sf::Vector2f& spawnPosition,
+            const std::string& configPath, EnemyBase* targetEnemy, float damage);
     
 		void checkGameObjectsMarkedForRemoval();
 
 	private:
-
-		RenderManager& m_renderManager;
 
 		std::vector<std::unique_ptr<GameObject>> m_gameObjects {};
 };

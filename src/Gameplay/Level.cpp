@@ -43,16 +43,15 @@ void from_json(const nlohmann::json& j, Wave& p)
     p.currentSpawnGroupIndex = 0;
 }
 
-Level::Level(RenderManager& renderManager, GameObjectManager& gameObjectManager)
-    : m_renderManager(renderManager),
-      m_gameObjectManager(gameObjectManager)
+Level::Level(GameObjectManager& gameObjectManager)
+    :m_gameObjectManager(gameObjectManager)
 {}
 
 Level::~Level()
 {
-    if (m_layerZero) m_renderManager.removeFromRenderQueue(*m_layerZero, ZOrder::Background);
-    if (m_layerOne) m_renderManager.removeFromRenderQueue(*m_layerOne, ZOrder::Background);
-    if (m_layerTwo) m_renderManager.removeFromRenderQueue(*m_layerTwo, ZOrder::Background);
+    if (m_layerZero) RenderManager::getInstance().removeFromRenderQueue(*m_layerZero, ZOrder::Background);
+    if (m_layerOne) RenderManager::getInstance().removeFromRenderQueue(*m_layerOne, ZOrder::Background);
+    if (m_layerTwo) RenderManager::getInstance().removeFromRenderQueue(*m_layerTwo, ZOrder::Background);
 }
 
 std::vector<sf::Vector2f> Level::extractPointsFromMapLayer(const tmx::Map& map, const std::string& layerName) 
@@ -157,9 +156,9 @@ bool Level::load(const std::string& levelFilePath)
     m_layerOne = std::make_unique<MapLayer>(*m_map, 1);
     m_layerTwo = std::make_unique<MapLayer>(*m_map, 2);
 
-    if (m_layerZero) m_renderManager.addToRenderQueue(*m_layerZero, ZOrder::Background);
-    if (m_layerOne) m_renderManager.addToRenderQueue(*m_layerOne, ZOrder::Background);
-    if (m_layerTwo) m_renderManager.addToRenderQueue(*m_layerTwo, ZOrder::Background);
+    if (m_layerZero) RenderManager::getInstance().addToRenderQueue(*m_layerZero, ZOrder::Background);
+    if (m_layerOne) RenderManager::getInstance().addToRenderQueue(*m_layerOne, ZOrder::Background);
+    if (m_layerTwo) RenderManager::getInstance().addToRenderQueue(*m_layerTwo, ZOrder::Background);
     
     m_currentWaveIndex = 0;
     m_waveDelayTimer = 0.0f;

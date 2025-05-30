@@ -12,7 +12,6 @@ namespace sf
 
 class World;
 class MouseManager;
-class RenderManager;
 class GameObjectManager;
 
 class GameManager
@@ -42,7 +41,6 @@ class GameManager
 
 		std::unique_ptr<sf::RenderWindow> m_window {nullptr};
 		std::unique_ptr<MouseManager> m_mouseManager {nullptr};
-		std::unique_ptr<RenderManager> m_renderManager {nullptr};
 		std::unique_ptr<World> m_world {nullptr};
 		std::unique_ptr<GameObjectManager> m_gameObjectManager {nullptr};
 

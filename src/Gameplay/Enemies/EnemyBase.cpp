@@ -7,15 +7,9 @@
 #include <Core/RenderManager.h>
 
 
-EnemyBase::EnemyBase(const sf::Vector2f& initialPosition, const std::string& configPath, RenderManager& renderManager, const std::vector<sf::Vector2f>& pathPoints)
+EnemyBase::EnemyBase(const sf::Vector2f& initialPosition, const std::string& configPath, const std::vector<sf::Vector2f>& pathPoints)
     : GameObject(initialPosition.x, initialPosition.y),
-    m_renderManager(renderManager),
-    m_pathPoints(pathPoints),
-    m_currentPathIndex(0), 
-    m_currentHealth(0.0f), 
-    m_maxHealth(0.0f), 
-    m_speed(0.0f), 
-    m_goldValue(0)
+    m_pathPoints(pathPoints)
 {
 
     nlohmann::json enemyJson = JsonManager::getInstance().loadConfigFile(configPath);
@@ -39,13 +33,13 @@ EnemyBase::EnemyBase(const sf::Vector2f& initialPosition, const std::string& con
     m_sprite->setPosition(m_position);
     m_sprite->setScale(scale, scale);
 
-    m_renderManager.addToRenderQueue(*m_sprite, ZOrder::Foreground);
+    RenderManager::getInstance().addToRenderQueue(*m_sprite, ZOrder::Foreground);
 }
 
 EnemyBase::~EnemyBase()
 {
     if (m_sprite) {
-        m_renderManager.removeFromRenderQueue(*m_sprite, ZOrder::Foreground);
+        RenderManager::getInstance().removeFromRenderQueue(*m_sprite, ZOrder::Foreground);
     }
 }
 
@@ -59,6 +53,8 @@ void EnemyBase::applyConfig(const nlohmann::json& configData)
 
 void EnemyBase::update(uint32_t deltaMilliseconds)
 {
+    if (m_markedForRemoval) return;
+    
     move(deltaMilliseconds);
 
     if (m_animationComponent)

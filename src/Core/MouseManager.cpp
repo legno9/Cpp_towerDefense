@@ -8,15 +8,14 @@
 #include <Core/GameManager.h>
 #include <Core/RenderManager.h>
 
-MouseManager::MouseManager(sf::RenderWindow& window, RenderManager& renderManager, GameManager& gameManager)
+MouseManager::MouseManager(sf::RenderWindow& window, GameManager& gameManager)
     : m_window(window),
-      m_renderManager(renderManager),
       m_gameManager(gameManager)
 {}
 
 MouseManager::~MouseManager()
 {
-    m_renderManager.removeFromRenderQueue(*m_tileIndicator, ZOrder::SpatialUI);
+    RenderManager::getInstance().removeFromRenderQueue(*m_tileIndicator, ZOrder::SpatialUI);
 }
 
 void MouseManager::setTowerLayer(MapLayer* towersLayer)
@@ -36,7 +35,7 @@ void MouseManager::setTowerLayer(MapLayer* towersLayer)
         m_tileIndicator->setFillColor(m_fillIndicatorColor);
         m_tileIndicator->setOutlineColor(m_outlineIndicatorColor);
         m_tileIndicator->setOutlineThickness(3.f);
-        m_renderManager.addToRenderQueue(*m_tileIndicator, ZOrder::SpatialUI);
+        RenderManager::getInstance().addToRenderQueue(*m_tileIndicator, ZOrder::SpatialUI);
         return;
     }
 

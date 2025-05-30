@@ -10,5 +10,8 @@
   "flags": ["Sellable", "SingleTargetDamage"],
   "maxLevel": 3,
   "animationDataPath": "./data/Animations/Turrets/turretShooterAnim.json",
-  "spriteScale": 1.5
+  "spriteScale": 1.5,
+  "projectileType": "ShooterProjectile",
+  "projectileConfigPath": "./data/Config/Turrets/Projectiles/shooterProjectileConfig.json"
+
 }

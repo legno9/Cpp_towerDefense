@@ -48,10 +48,10 @@ bool GameManager::init(const std::string& configPath)
         ShowWindow(hWnd, SW_MAXIMIZE);
     }
 	
-	m_renderManager = std::make_unique<RenderManager>(*m_window);
-	m_mouseManager = std::make_unique<MouseManager>(*m_window, *m_renderManager, *this);
-	m_gameObjectManager = std::make_unique<GameObjectManager>(*m_renderManager);
-	m_world = std::make_unique<World>(*m_renderManager, *m_gameObjectManager);
+	RenderManager::initialize(*m_window);
+	m_mouseManager = std::make_unique<MouseManager>(*m_window, *this);
+	m_gameObjectManager = std::make_unique<GameObjectManager>();
+	m_world = std::make_unique<World>(*m_gameObjectManager);
 
 	bool loadOk = false;
     if (m_world) 
@@ -109,7 +109,7 @@ void GameManager::render()
 {
 	m_window->clear();
 
-	m_renderManager->render();
+	RenderManager::getInstance().render();
 
 	m_window->display();
 }
