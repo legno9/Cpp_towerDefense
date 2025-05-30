@@ -25,6 +25,9 @@ class GameObjectManager
     
 		void checkGameObjectsMarkedForRemoval();
 
+		void removeGameObject(GameObject* gameObject);
+		void removeAllGameObjects();
+
 	private:
 		
 		GameObjectManager() = default;

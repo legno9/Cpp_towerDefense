@@ -1,7 +1,7 @@
 {
   "mapFilePath": "data/Levels/Level_01.tmx",
   "enemyPathLayerName": "PathLayerPoints",
-  "towerLayerIndex": 1,
+  "towerLayerIndex": 2,
   "waves": [
     {
       "waveNumber": 1,

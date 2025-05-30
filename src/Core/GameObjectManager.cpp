@@ -125,3 +125,25 @@ void GameObjectManager::checkGameObjectsMarkedForRemoval()
         }),
         m_gameObjects.end());
 }
+
+void GameObjectManager::removeGameObject(GameObject* gameObject)
+{
+    if (gameObject == nullptr)
+    {
+        std::cerr << "GameObjectManager::removeGameObject() called with nullptr gameObject" << std::endl;
+        return;
+    }
+
+    auto it = std::remove_if(m_gameObjects.begin(), m_gameObjects.end(),
+        [gameObject](const std::unique_ptr<GameObject>& obj) { return obj.get() == gameObject; });
+
+    if (it != m_gameObjects.end())
+    {
+        m_gameObjects.erase(it, m_gameObjects.end());
+    }
+}
+
+void GameObjectManager::removeAllGameObjects()
+{
+    m_gameObjects.clear();
+}

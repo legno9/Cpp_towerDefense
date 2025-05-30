@@ -13,6 +13,19 @@ GameManager::GameManager() = default;
 
 GameManager::~GameManager()
 {
+    if (m_mouseManager)
+    {
+        m_mouseManager->setTowerLayer(nullptr);
+        m_mouseManager.reset();
+    }
+
+    if (m_world)
+    {
+        m_world->unloadCurrentLevel();
+        m_world.reset();
+    }
+    
+    GameObjectManager::getInstance().removeAllGameObjects();
     RenderManager::removeInstance();
 };
 

@@ -16,6 +16,8 @@ public:
     bool loadLevel(const std::string& levelId);
     bool loadFirstLevel();
 
+    void unloadCurrentLevel();
+
     void update(uint32_t deltaMilliseconds);
 
     void nextLevel();

@@ -151,3 +151,8 @@ void World::startCurrentLevelWaves()
 		std::cerr << "ERROR: No current level to start waves." << std::endl;
 	}
 }
+
+void World::unloadCurrentLevel() 
+{
+    m_currentLevel.reset();
+}
