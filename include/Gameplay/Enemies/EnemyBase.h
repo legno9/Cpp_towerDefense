@@ -8,6 +8,7 @@
 #include <Animation/AnimationComponent.h>
 #include <Gameplay/GameObject.h>
 
+
 class EnemyBase : public GameObject
 {
 public:
@@ -38,7 +39,8 @@ protected:
     float m_currentSpeed { 0.0f };
     float m_speedReductionDuration { 0.0f };
     int m_goldValue { 0 };
-
+    int m_playerDamage {1};
+    
     float m_distanceCoveredTotal{0.0f};
     float m_totalPathLength{0.0f}; 
 

@@ -8,7 +8,7 @@ AnimationComponent::AnimationComponent(sf::Sprite& targetSprite, const std::stri
 {
     m_animationData = &AnimationDataManager::getInstance().getSpriteSheetData(animationConfigPath);
     
-    m_spriteSheetTexture = &AnimationDataManager::getInstance().getSpriteSheetTexture(m_animationData->texturePath);
+    m_spriteSheetTexture = &AnimationDataManager::getInstance().getSpriteSheetTexture(m_animationData->texturePaths[0]);
     m_targetSprite.setTexture(*m_spriteSheetTexture);
 }
 
@@ -82,7 +82,7 @@ void AnimationComponent::play(const std::string& animationName, bool forceRestar
     auto it = m_animationData->animations.find(actualAnimationName);
     if (it == m_animationData->animations.end())
     {
-        std::cerr << "ERROR: Animation '" << actualAnimationName << "' not found for spritesheet " << m_animationData->texturePath << std::endl;
+        std::cerr << "ERROR: Animation '" << actualAnimationName << "' not found for spritesheet " << m_animationData->texturePaths[0] << std::endl;
         m_isPlaying = false;
         m_currentAnimation = nullptr;
         throw std::runtime_error("Failed to find animation: " + actualAnimationName);
@@ -182,7 +182,18 @@ std::string AnimationComponent::getAnimationNameForDirection(const std::string& 
 void AnimationComponent::changeConfigPath(const std::string& newConfigPath)
 {
     m_animationData = &AnimationDataManager::getInstance().getSpriteSheetData(newConfigPath);
-    m_spriteSheetTexture = &AnimationDataManager::getInstance().getSpriteSheetTexture(m_animationData->texturePath);
+    m_spriteSheetTexture = &AnimationDataManager::getInstance().getSpriteSheetTexture(m_animationData->texturePaths[0]);
+    m_targetSprite.setTexture(*m_spriteSheetTexture);
+
+    if (m_isPlaying && m_currentAnimation) 
+    {
+        play(m_baseAnimationName, true);
+    }
+}
+
+void AnimationComponent::changeTexture(const std::string& texturePath)
+{
+    m_spriteSheetTexture = &AnimationDataManager::getInstance().getSpriteSheetTexture(texturePath);
     m_targetSprite.setTexture(*m_spriteSheetTexture);
 
     if (m_isPlaying && m_currentAnimation) 

@@ -15,11 +15,13 @@ namespace sf
 
 class MapLayer;
 class GameManager;
+class Player;
+
 class MouseManager
 {
     public:
 
-        MouseManager(sf::RenderWindow& window, GameManager& gameManager);
+        MouseManager(sf::RenderWindow& window, GameManager& gameManager, Player& player);
         ~MouseManager();
 
         void update();
@@ -33,10 +35,10 @@ class MouseManager
 
         GameManager& m_gameManager;
         sf::RenderWindow& m_window;
+        Player& m_player;
         
         MapLayer* m_towersLayer { nullptr };
-        std::vector<sf::Vector2u> m_turretTiles;
-
+        
         std::unique_ptr<sf::RectangleShape> m_tileIndicator{ nullptr };
 
         sf::Vector2f m_worldPos { 0.f, 0.f };

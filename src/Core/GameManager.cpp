@@ -7,6 +7,8 @@
 #include <Core/GameObjectManager.h>
 #include <Core/JsonManager.h>
 #include <Gameplay/World.h>
+#include <Gameplay/Player.h>
+#include <Gameplay/Turrets/TurretBase.h>
 
 
 GameManager::GameManager() = default;
@@ -36,26 +38,43 @@ bool GameManager::init(const std::string& configPath)
 
 	nlohmann::json configJson = JsonManager::getInstance().loadConfigFile(configPath);
 
-	GameCreateInfo createInfo;
-
 	if (configJson.is_null() || configJson.empty())
     {
         std::cerr << "ERROR: GameCreateInfo failed to load or parse config: " << configPath << std::endl;
         return false;
     }
 
-	try
+    GameCreateInfo createInfo;
+
+    createInfo.gameTitle = JsonManager::getInstance().getString(configJson, "gameTitle");
+    createInfo.screenWidth = JsonManager::getInstance().getInt(configJson, "screenWidth");
+    createInfo.screenHeight = JsonManager::getInstance().getInt(configJson, "screenHeight");
+    createInfo.frameRateLimit = JsonManager::getInstance().getInt(configJson, "frameRateLimit");
+    int startingGold = JsonManager::getInstance().getInt(configJson, "startingGold");
+    int startingHealth = JsonManager::getInstance().getInt(configJson, "startingHealth");
+
+    if (configJson.contains("turrets") && configJson["turrets"].is_array()) 
     {
-        createInfo.gameTitle = JsonManager::getInstance().getString(configJson, "gameTitle");
-        createInfo.screenWidth = JsonManager::getInstance().getInt(configJson, "screenWidth");
-        createInfo.screenHeight = JsonManager::getInstance().getInt(configJson, "screenHeight");
-        createInfo.frameRateLimit = JsonManager::getInstance().getInt(configJson, "frameRateLimit");
-    }
-    catch (const nlohmann::json::exception& e)
+        for (const auto& turretEntry : configJson["turrets"]) 
+        {
+            std::string typeStr = JsonManager::getInstance().getString(turretEntry, "type");
+            std::string turretConfigPath = JsonManager::getInstance().getString(turretEntry, "configPath");
+
+            GameObjectType turretType = stringToGameObjectType(typeStr);
+
+            if (turretType != GameObjectType::None && !turretConfigPath.empty()) 
+            {
+                GameObjectManager::getInstance().registerTurretsPrices(turretType, turretConfigPath);
+            } else 
+            {
+                std::cerr << "WARNING: Invalid buildable turret entry in config: " << turretEntry.dump() << std::endl;
+            }
+        }
+    } else 
     {
-        std::cerr << "ERROR: GameCreateInfo failed to parse JSON data from " << configPath << ": " << e.what() << std::endl;
-        return false;
+        std::cerr << "ERROR: 'buildableTurrets' array not found in buildable_turrets.json." << std::endl;
     }
+
 
 	m_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(createInfo.screenWidth, createInfo.screenHeight), createInfo.gameTitle);
 	m_window->setFramerateLimit(createInfo.frameRateLimit);
@@ -67,8 +86,10 @@ bool GameManager::init(const std::string& configPath)
     }
 	
 	RenderManager::initialize(*m_window);
-	m_mouseManager = std::make_unique<MouseManager>(*m_window, *this);
+	m_mouseManager = std::make_unique<MouseManager>(*m_window, *this , *m_player);
 	m_world = std::make_unique<World>();
+    m_player = std::make_unique<Player>(startingHealth, startingGold); 
+    GameObjectManager::getInstance().setPlayer(m_player.get());
 
 	bool loadOk = false;
     if (m_world) 
@@ -131,9 +152,82 @@ void GameManager::render()
 	m_window->display();
 }
 
-void GameManager::onTileClicked(sf::Vector2f mousePosition)
+void GameManager::startWaves()
 {
 	assert(m_world != nullptr && "GameManager::onTileClicked() world is nullptr");
-	GameObjectManager::getInstance().spawnTurret(GameObjectType::AreaDamageTurret, static_cast<sf::Vector2f>(mousePosition));
 	m_world->startCurrentLevelWaves();
+}
+
+
+void GameManager::createTurret(sf::Vector2f tileCoordinates, GameObjectType turretType)
+{
+    if (GameObjectManager::getInstance().getTurretBuyPrice(turretType) > m_player->getGold())
+    {
+        std::cerr << "ERROR: Not enough gold to create turret at position: " << tileCoordinates.x << ", " << tileCoordinates.y << std::endl;
+        return;
+    }
+
+    m_player->reduceGold(GameObjectManager::getInstance().getTurretBuyPrice(turretType));
+	GameObjectManager::getInstance().spawnTurret(turretType, tileCoordinates);
+    
+	startWaves();
+}
+
+void GameManager::upgradeTurret(sf::Vector2f tileCoordinates)
+{
+    TurretBase* turret = GameObjectManager::getInstance().getTurretByPos(tileCoordinates);
+
+    if (!turret)
+    {
+        std::cerr << "ERROR: No turret found at position: " << tileCoordinates.x << ", " << tileCoordinates.y << std::endl;
+        return;
+    }
+
+    if (turret->isMarkedForRemoval())
+    {
+        std::cerr << "ERROR: Turret at position: " << tileCoordinates.x << ", " << tileCoordinates.y << " is marked for removal." << std::endl;
+        return;
+    }
+
+    if (turret->isMaxLevel())
+    {
+        std::cerr << "ERROR: Turret at position: " << tileCoordinates.x << ", " << tileCoordinates.y << " is already at max level." << std::endl;
+        return;
+    }
+
+    GameObjectType turretType = turret->getType();
+    int upgradePrice = GameObjectManager::getInstance().getTurretUpgradePrice(turretType);
+
+    if (upgradePrice > m_player->getGold())
+    {
+        std::cerr << "ERROR: Not enough gold to upgrade turret at position: " << tileCoordinates.x << ", " << tileCoordinates.y << std::endl;
+        return;
+    }
+
+    turret->upgrade();
+    m_player->reduceGold(upgradePrice);
+}
+
+void GameManager::sellTurret(sf::Vector2f tileCoordinates)
+{
+    TurretBase* turret = GameObjectManager::getInstance().getTurretByPos(tileCoordinates);
+    
+    if (turret)
+    {
+        GameObjectType turretType = turret->getType();
+        int sellPrice = GameObjectManager::getInstance().getTurretSellPrice(turretType);
+        
+        m_player->addGold(sellPrice);
+        turret->sell();
+    }
+    else
+    {
+        std::cerr << "ERROR: No turret found at position: " << tileCoordinates.x << ", " << tileCoordinates.y << std::endl;
+    }
+}
+
+bool GameManager::isTurretCreated(sf::Vector2f tileCoordinates) const
+{
+    TurretBase* turret = GameObjectManager::getInstance().getTurretByPos(tileCoordinates);
+    return turret != nullptr;
 }

@@ -7,11 +7,13 @@
 #include <Core/GameManager.h>
 #include <Core/RenderManager.h>
 #include <Render/SFMLOrthogonalLayer.h>
+#include <Utils/Common.h>
 
 
-MouseManager::MouseManager(sf::RenderWindow& window, GameManager& gameManager)
+MouseManager::MouseManager(sf::RenderWindow& window, GameManager& gameManager, Player& player)
     : m_window(window),
-      m_gameManager(gameManager)
+      m_gameManager(gameManager),
+      m_player(player)
 {}
 
 MouseManager::~MouseManager()
@@ -90,13 +92,18 @@ void MouseManager::update()
     {
         sf::Vector2f worldTilePosition (tileCoordinates.x * m_currentTileSize.x, tileCoordinates.y * m_currentTileSize.y);
         m_tileIndicator->setPosition(worldTilePosition);
+        sf::Vector2f wordlTileCenter = worldTilePosition + sf::Vector2f(m_currentTileSize.x / 2.0f, m_currentTileSize.y / 2.0f);
         
-        if (isLeftClicked && 
-            std::find(m_turretTiles.begin(), m_turretTiles.end(), tileCoordinates) == m_turretTiles.end())
+        if (isLeftClicked)
         {
-            sf::Vector2f wordlTileCenter = worldTilePosition + sf::Vector2f(m_currentTileSize.x / 2.0f, m_currentTileSize.y / 2.0f);
-            m_gameManager.onTileClicked(wordlTileCenter);
-            m_turretTiles.push_back(tileCoordinates);
+            if (!m_gameManager.isTurretCreated(wordlTileCenter))
+            {
+                m_gameManager.createTurret(wordlTileCenter, GameObjectType::AreaDamageTurret);
+            }
+            else
+            {
+                m_gameManager.upgradeTurret(wordlTileCenter);
+            }
         }
     }
     else

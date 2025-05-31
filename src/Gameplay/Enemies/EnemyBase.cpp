@@ -5,6 +5,8 @@
 #include <Core/AssetManager.h>
 #include <Core/AnimationDataManager.h>
 #include <Core/RenderManager.h>
+#include <Core/GameObjectManager.h>
+#include <Gameplay/Player.h>
 
 
 EnemyBase::EnemyBase(const sf::Vector2f& initialPosition, const std::string& configPath, const std::vector<sf::Vector2f>& pathPoints)
@@ -83,7 +85,6 @@ void EnemyBase::update(uint32_t deltaMilliseconds)
 
     if (m_currentHealth <= 0) 
     {
-        m_markedForRemoval = true;
         die();
     }
 
@@ -111,6 +112,7 @@ void EnemyBase::move(uint32_t deltaMilliseconds)
         {
             m_position = m_pathPoints.back();
             m_distanceCoveredTotal = m_totalPathLength; 
+            GameObjectManager::getInstance().getPlayer()->receiveDamage(m_playerDamage);
             m_markedForRemoval = true;
             return;
         }
@@ -168,7 +170,6 @@ void EnemyBase::receiveDamage(float damage)
     if (m_currentHealth <= 0) 
     {
         m_currentHealth = 0;
-        m_markedForRemoval = true;
         die();
 
     }
@@ -186,8 +187,8 @@ void EnemyBase::reduceSpeed(float reductionFactor, float speedReductionDuration)
 
 void EnemyBase::die()
 {
-    std::cout << "Enemy died! Awarded " << m_goldValue << " gold." << std::endl;
-    
+    GameObjectManager::getInstance().getPlayer()->addGold(m_goldValue);
+    m_markedForRemoval = true;
 }
 
 void EnemyBase::predictDamage(float damageAmount)

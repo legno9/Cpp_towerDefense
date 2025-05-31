@@ -8,4 +8,6 @@ class TurretSlowness: public TurretBase
         TurretSlowness(const sf::Vector2f& position, const std::string& configPath);
         ~TurretSlowness() override = default;
 
+        GameObjectType getType() const override { return GameObjectType::SlownessTurret; }
+
 };

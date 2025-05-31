@@ -24,7 +24,7 @@ void from_json(const nlohmann::json& j, Animation& p) {
 }
 
 void from_json(const nlohmann::json& j, SpriteSheetAnimationData& p) {
-    p.texturePath = j.at("texturePath").get<std::string>();
+    p.texturePaths = j.at("texturePaths").get<std::vector<std::string>>();
     p.defaultFrameWidth = j.at("defaultFrameWidth").get<int>();
     p.defaultFrameHeight = j.at("defaultFrameHeight").get<int>();
     p.animations = j.at("animations").get<std::map<std::string, Animation>>();
@@ -74,15 +74,18 @@ const SpriteSheetAnimationData& AnimationDataManager::getSpriteSheetData(const s
         throw std::runtime_error("JSON conversion failed for animation config: " + configPath + " - " + e.what());
     }
 
-    try 
+    for (const std::string& texturePath : data.texturePaths)
     {
-        sf::Texture& texture = AssetManager::getInstance().loadTexture(data.texturePath);
-        m_loadedSpriteSheetTextures[data.texturePath] = &texture;
-    } 
-    catch (const std::runtime_error& e) 
-    {
-        std::cerr << "ERROR: AnimationDataManager failed to load spritesheet texture '" << data.texturePath << "' for config " << configPath << ": " << e.what() << std::endl;
-        throw std::runtime_error("Failed to load spritesheet texture: " + data.texturePath + " for config " + configPath + " - " + e.what());
+        try 
+        {
+            sf::Texture& texture = AssetManager::getInstance().loadTexture(texturePath);
+            m_loadedSpriteSheetTextures[texturePath] = &texture;
+        } 
+        catch (const std::runtime_error& e) 
+        {
+            std::cerr << "ERROR: AnimationDataManager failed to load spritesheet texture '" << texturePath << "' for config " << configPath << ": " << e.what() << std::endl;
+            throw std::runtime_error("Failed to load spritesheet texture: " + texturePath + " for config " + configPath + " - " + e.what());
+        }
     }
 
     m_loadedAnimationData[configPath] = std::move(data);

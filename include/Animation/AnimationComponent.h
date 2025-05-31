@@ -21,6 +21,7 @@ public:
     bool isPlaying() const { return m_isPlaying; }
 
     void changeConfigPath(const std::string& newConfigPath);
+    void changeTexture(const std::string& texturePath);
 
     std::function<void(const std::string& animationName, int frameIndex)> onFrameEvent;
     std::function<void()> onAnimationEnd;

@@ -19,7 +19,19 @@ TurretBase::TurretBase(const sf::Vector2f& position, const std::string& configPa
         throw std::runtime_error("Invalid turret config file.");
     }
 
-    applyConfig(turretJson);
+    if (turretJson.contains("levels") && turretJson["levels"].is_array()) 
+    {
+        m_allLevelsData = turretJson["levels"];
+        m_maxLevel = static_cast<int>(m_allLevelsData.size());
+    } 
+    else 
+    {
+        std::cerr << "ERROR: Turret config '" << configPath << "' missing 'levels' array." << std::endl;
+        throw std::runtime_error("Turret config missing 'levels' array.");
+    }
+
+    m_projectileType = JsonManager::getInstance().getString(turretJson, "projectileType");
+    m_projectileConfigPath = JsonManager::getInstance().getString(turretJson, "projectileConfigPath");
 
     m_sprite = std::make_unique<sf::Sprite>();
 
@@ -34,8 +46,17 @@ TurretBase::TurretBase(const sf::Vector2f& position, const std::string& configPa
     m_sprite->setPosition(m_position);
     m_sprite->setScale(scale,scale);
 
-    m_actionTimer = 0.0f;
-    m_level = 1;
+    if (m_level > 0 && m_level <= m_allLevelsData.size()) 
+    {
+        applyConfig(m_allLevelsData[m_level - 1]);
+    } 
+    else 
+    {
+        std::cerr << "ERROR: Turret config '" << configPath << "' has no level 1 data." << std::endl;
+        throw std::runtime_error("Turret config missing level 1 data.");
+    }
+
+    getAnimLevelsData(turretJson);
 
     RenderManager::getInstance().addToRenderQueue(*m_sprite, ZOrder::Foreground);
 }
@@ -48,19 +69,37 @@ TurretBase::~TurretBase()
     }
 }
 
+void TurretBase::getAnimLevelsData(const nlohmann::json& json)
+{
+    std::string animationDataPath = JsonManager::getInstance().getString(json, "animationDataPath");
+    if (animationDataPath.empty()) 
+    {
+        std::cerr << "ERROR: Turret config missing 'animationDataPath'." << std::endl;
+        throw std::runtime_error("Turret config missing 'animationDataPath'.");
+    }
+
+    nlohmann::json animationData = JsonManager::getInstance().loadConfigFile(animationDataPath);
+    if (animationData.is_null() || animationData.empty()) 
+    {
+        std::cerr << "ERROR: Failed to load or parse animation data: " << animationDataPath << std::endl;
+        throw std::runtime_error("Invalid animation data file.");
+    }
+    if (animationData.contains("texturePaths") && animationData["texturePaths"].is_array()) 
+    {
+        m_allAnimLevelsData = animationData["texturePaths"];
+    } 
+    else 
+    {
+        std::cerr << "ERROR: Animation data '" << animationDataPath << "' missing 'levels' array." << std::endl;
+        throw std::runtime_error("Animation data missing 'levels' array.");
+    }
+}
+
 void TurretBase::applyConfig(const nlohmann::json& configData)
 {
     m_damage = JsonManager::getInstance().getFloat(configData, "damage");
     m_actionRange = JsonManager::getInstance().getFloat(configData, "actionRange");
     m_actionRate = JsonManager::getInstance().getFloat(configData, "actionRate");
-
-    m_buyPrice = JsonManager::getInstance().getInt(configData, "buyPrice");
-    m_sellPrice = JsonManager::getInstance().getInt(configData, "sellPrice");
-    m_upgradePrice = JsonManager::getInstance().getInt(configData, "upgradePrice");
-    m_maxLevel = JsonManager::getInstance().getInt(configData, "maxLevel");
-
-    m_projectileType = JsonManager::getInstance().getString(configData, "projectileType");
-    m_projectileConfigPath = JsonManager::getInstance().getString(configData, "projectileConfigPath");
 }
 
 void TurretBase::update(uint32_t deltaMilliseconds)
@@ -136,10 +175,10 @@ void TurretBase::updateFacingDirection(unsigned int targetEnemyId)
                 m_animationComponent->SetDirectionFromVector(directionToTarget);
             }
         }
-        else
-        {
-            m_animationComponent->setDirection(Direction::South);
-        }
+        // else
+        // {
+        //     m_animationComponent->setDirection(Direction::South);
+        // }
     }
 }
 
@@ -195,13 +234,24 @@ void TurretBase::performAttack(unsigned int targetEnemyId)
     }
 }
 
-void TurretBase::upgrade(const nlohmann::json& json)
+void TurretBase::upgrade()
 {
+    if (isMaxLevel()) 
+    {
+        std::cerr << "WARNING: Attempted to upgrade Turret ID " << getId() << " but it is already at max level (" << m_maxLevel << ")." << std::endl;
+        return;
+    }
 
+    m_level++;
+
+    if (m_level > 0 && m_level <= m_allLevelsData.size()) 
+    {
+        applyConfig(m_allLevelsData[m_level - 1]);
+        m_animationComponent->changeTexture(m_allAnimLevelsData[m_level - 1]);
+    }
 }
 
 void TurretBase::sell()
 {
     m_markedForRemoval = true;
-    std::cout << "Turret sold for: " << m_sellPrice << " gold." << std::endl;
 }

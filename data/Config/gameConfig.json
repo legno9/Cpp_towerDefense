@@ -2,5 +2,23 @@
   "gameTitle": "Ninjas vs Demons",
   "screenWidth": 960,
   "screenHeight": 540,
-  "frameRateLimit": 60
+  "frameRateLimit": 60,
+
+  "startingGold": 1000,
+  "startingHealth": 10,
+
+  "turrets": [
+    {
+      "type": "ShooterTurret",
+      "configPath": "data/Config/Turrets/turretShooterConfig.json"
+    },
+    {
+      "type": "AreaDamageTurret",
+      "configPath": "data/Config/Turrets/turretAreaDamageConfig.json"
+    },
+    {
+      "type": "SlownessTurret",
+      "configPath": "data/Config/Turrets/turretSlownessConfig.json"
+    }
+  ]
 }

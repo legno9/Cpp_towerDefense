@@ -135,11 +135,6 @@ endif()
 
 # - Smokebomb 
 
-# - Mejorar torres.
-
-# - Sistema de recursos con los que comprar torres y mejorarlas. Se obtiene de los enemigos.
-# - Zona de la base, si un enemigo llega a la base se pierde vida. Sistema de vida.
-
 # - Sistema de interfaz de usuario con botones para comprar torres y mejorarlas.
 # - Pantalla de inicio, pausa, fin de juego.
 

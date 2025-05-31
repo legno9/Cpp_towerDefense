@@ -1,14 +1,31 @@
 {
-  "damage": 15.0,
-  "actionRange": 100.0,
-  "actionRate": 3,
   "buyPrice": 100,
   "sellPrice": 50,
   "upgradePrice": 100,
-  "maxLevel": 3,
   "animationDataPath": "./data/Animations/Turrets/turretAreaDamageAnim.json",
   "spriteScale": 1.5,
   "projectileType": "AreaDamageProjectile",
-  "projectileConfigPath": "./data/Config/Turrets/Projectiles/areaDamageProjectileConfig.json"
+  "projectileConfigPath": "./data/Config/Turrets/Projectiles/areaDamageProjectileConfig.json",
+
+  "levels": [
+    {
+      "level": 1,
+      "damage": 15.0,
+      "actionRange": 100.0,
+      "actionRate": 3.0
+    },
+    {
+      "level": 2,
+      "damage": 20.0,
+      "actionRange": 140.0,
+      "actionRate": 2.0
+    },
+    {
+      "level": 3,
+      "damage": 30.0,
+      "actionRange": 200.0,
+      "actionRate": 2.0
+    }
+  ]
 
 }

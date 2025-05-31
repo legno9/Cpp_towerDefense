@@ -25,7 +25,7 @@ struct Animation
 
 struct SpriteSheetAnimationData
 {
-    std::string texturePath {};
+    std::vector<std::string> texturePaths {};
     int defaultFrameWidth {0};   
     int defaultFrameHeight {0};  
     std::map<std::string, Animation> animations {};

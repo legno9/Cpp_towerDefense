@@ -1,14 +1,31 @@
 {
-  "damage": 0.0,
-  "actionRange": 150.0,
-  "actionRate": 3,
   "buyPrice": 50,
   "sellPrice": 25,
   "upgradePrice": 50,
-  "maxLevel": 3,
   "animationDataPath": "./data/Animations/Turrets/turretSlownessAnim.json",
   "spriteScale": 1.5,
   "projectileType": "SlownessProjectile",
-  "projectileConfigPath": "./data/Config/Turrets/Projectiles/slownessProjectileConfig.json"
+  "projectileConfigPath": "./data/Config/Turrets/Projectiles/slownessProjectileConfig.json",
+
+  "levels": [
+    {
+      "level": 1,
+      "damage": 0.0,
+      "actionRange": 150.0,
+      "actionRate": 6.0
+    },
+    {
+      "level": 2,
+      "damage": 0.0,
+      "actionRange": 170.0,
+      "actionRate": 4.5
+    },
+    {
+      "level": 3,
+      "damage": 0.0,
+      "actionRange": 200.0,
+      "actionRate": 2.0
+    }
+  ]
 
 }

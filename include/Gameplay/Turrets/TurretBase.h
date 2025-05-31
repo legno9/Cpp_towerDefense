@@ -7,6 +7,7 @@
 #include <Utils/json.hpp>
 #include <Gameplay/GameObject.h>
 #include <Animation/AnimationComponent.h>
+#include <Utils/Common.h>
 
 namespace sf
 {
@@ -23,11 +24,13 @@ class TurretBase: public GameObject
 
         void update(uint32_t deltaMilliseconds) override;
 
-        void upgrade(const nlohmann::json& json);
+        void upgrade();
         void sell();
         void action(unsigned int currentTargetEnemyId);
 
         bool isMaxLevel() const { return m_level >= m_maxLevel; }
+
+        virtual GameObjectType getType() const = 0;
 
     protected:
         std::unique_ptr<sf::Sprite> m_sprite {nullptr};
@@ -36,12 +39,8 @@ class TurretBase: public GameObject
         float m_actionRange{0.0f};
         float m_actionRate{0.0f};
 
-        int m_buyPrice{0};
-        int m_sellPrice{0};
-        int m_upgradePrice{0};
-
         float m_actionTimer{0.0f};
-        int m_level{0};
+        int m_level{1};
         int m_maxLevel{0};
 
         bool m_isAttacking{false};
@@ -51,7 +50,11 @@ class TurretBase: public GameObject
 
         std::unique_ptr<AnimationComponent> m_animationComponent {nullptr};
 
+        nlohmann::json m_allLevelsData {};
+        nlohmann::json m_allAnimLevelsData{};
+
         void applyConfig(const nlohmann::json& json);
+        void getAnimLevelsData(const nlohmann::json& json);
         void updateFacingDirection(unsigned int targetEnemyId);
         virtual void performAttack(unsigned int targetEnemyId);
 

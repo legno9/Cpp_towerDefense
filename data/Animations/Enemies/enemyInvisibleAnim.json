@@ -1,5 +1,7 @@
 {
-  "texturePath": "./data/Enemies/enemy_basic_invisible.png",
+  "texturePaths": [
+    "./data/Enemies/enemy_basic_invisible.png"
+  ],
   "defaultFrameWidth": 32,  
   "defaultFrameHeight": 32,
 

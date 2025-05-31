@@ -3,6 +3,7 @@
 #include <iostream>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "Core/RenderManager.h"
+#include "Core/JsonManager.h"
 #include "Gameplay/GameObject.h"
 #include "Gameplay/Turrets/TurretShooter.h"
 #include "Gameplay/Turrets/TurretSlowness.h"
@@ -20,7 +21,7 @@ GameObjectManager& GameObjectManager::getInstance()
     return instance;
 }
 
-GameObject* GameObjectManager::addGameObjectToList(std::unique_ptr<GameObject> object)
+unsigned int GameObjectManager::addGameObjectToList(std::unique_ptr<GameObject> object)
 {
     if (object != nullptr)
     {
@@ -28,9 +29,27 @@ GameObject* GameObjectManager::addGameObjectToList(std::unique_ptr<GameObject> o
         GameObject* rawPtr = object.get();
         m_pendingGameObjects.push_back(std::move(object)); 
         m_idToObjectMap[rawPtr->getId()] = rawPtr;
-        return rawPtr;
+        return m_nextId;
     }
-    return nullptr;
+    return 0;
+}
+
+void GameObjectManager::registerTurretsPrices(GameObjectType type, const std::string& configPath)
+{
+    nlohmann::json turretJson = JsonManager::getInstance().loadConfigFile(configPath);
+    if (turretJson.is_null() || turretJson.empty()) 
+    {
+        std::cerr << "ERROR: Failed to load or parse turret config: " << configPath << std::endl;
+        return;
+    }
+
+    int buyPrice = JsonManager::getInstance().getInt(turretJson, "buyPrice");
+    int sellPrice = JsonManager::getInstance().getInt(turretJson, "sellPrice");
+    int upgradePrice = JsonManager::getInstance().getInt(turretJson, "upgradePrice");
+
+    m_turretBuyPrices[type] = buyPrice;
+    m_turretSellPrices[type] = sellPrice;
+    m_turretUpgradePrices[type] = upgradePrice;
 }
 
 void GameObjectManager::updateGameObjects(uint32_t deltaMiliseconds)
@@ -56,7 +75,7 @@ void GameObjectManager::updateGameObjects(uint32_t deltaMiliseconds)
     checkGameObjectsMarkedForRemoval();
 }
 
-GameObject* GameObjectManager::spawnEnemy(GameObjectType type, const sf::Vector2f& spawnPosition, 
+unsigned int GameObjectManager::spawnEnemy(GameObjectType type, const sf::Vector2f& spawnPosition, 
 			const std::string& configPath, const std::vector<sf::Vector2f>& pathPoints)
 {
     std::unique_ptr<GameObject> newObject = nullptr;
@@ -87,13 +106,13 @@ GameObject* GameObjectManager::spawnEnemy(GameObjectType type, const sf::Vector2
     catch (const std::exception& e)
     {
         std::cerr << "Error creating new game object: " << e.what() << std::endl;
-        return nullptr;
+        return 0;
     }
 
-    return nullptr;
+    return 0;
 }
 
-GameObject* GameObjectManager::spawnTurret(GameObjectType type, const sf::Vector2f& mousePosition)
+unsigned int GameObjectManager::spawnTurret(GameObjectType type, const sf::Vector2f& mousePosition)
 {
     std::unique_ptr<GameObject> newObject = nullptr;
 
@@ -123,13 +142,13 @@ GameObject* GameObjectManager::spawnTurret(GameObjectType type, const sf::Vector
     catch (const std::exception& e)
     {
         std::cerr << "Error creating new game object: " << e.what() << std::endl;
-        return nullptr;
+        return 0;
     }
 
-    return nullptr;
+    return 0;
 }
 
-GameObject* GameObjectManager::spawnProjectile(GameObjectType projectileType, const sf::Vector2f& spawnPosition,
+unsigned int GameObjectManager::spawnProjectile(GameObjectType projectileType, const sf::Vector2f& spawnPosition,
                                               const std::string& configPath, unsigned int targetEnemyId, float damage)
 {
     std::unique_ptr<GameObject> newObject = nullptr;
@@ -157,12 +176,12 @@ GameObject* GameObjectManager::spawnProjectile(GameObjectType projectileType, co
     catch (const std::exception& e)
     {
         std::cerr << "Error creating new game object: " << e.what() << std::endl;
-        return nullptr;
+        return 0;
     }
 
     
 
-    return nullptr;
+    return 0;
 }
 
 void GameObjectManager::checkGameObjectsMarkedForRemoval()
@@ -221,4 +240,61 @@ GameObject* GameObjectManager::getGameObjectById(unsigned int id) const
         return it->second;
     }
     return nullptr;
+}
+
+TurretBase* GameObjectManager::getTurretByPos(sf::Vector2f position) const
+{
+    for (const auto& obj : m_gameObjects)
+    {
+        if (obj->isMarkedForRemoval()) continue;
+
+        TurretBase* turret = dynamic_cast<TurretBase*>(obj.get());
+        if (turret && turret->getPosition() == position)
+        {
+            return turret;
+        }
+    }
+    return nullptr;
+}
+
+void GameObjectManager::setPlayer(Player* player)
+{
+    if (player && m_player == nullptr)
+    {
+        m_player = player;
+    }
+    else
+    {
+        std::cerr << "WARNING: GameObjectManager::setPlayer called with errors." << std::endl;
+    }
+}
+
+int GameObjectManager::getTurretBuyPrice(GameObjectType type) const
+{
+    auto it = m_turretBuyPrices.find(type);
+    if (it != m_turretBuyPrices.end())
+    {
+        return it->second;
+    }
+    return 0; 
+}
+
+int GameObjectManager::getTurretSellPrice(GameObjectType type) const
+{
+    auto it = m_turretSellPrices.find(type);
+    if (it != m_turretSellPrices.end())
+    {
+        return it->second;
+    }
+    return 0; 
+}
+
+int GameObjectManager::getTurretUpgradePrice(GameObjectType type) const
+{
+    auto it = m_turretUpgradePrices.find(type);
+    if (it != m_turretUpgradePrices.end())
+    {
+        return it->second;
+    }
+    return 0; 
 }

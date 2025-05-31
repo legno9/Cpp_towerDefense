@@ -1,5 +1,9 @@
 {
-  "texturePath": "./data/Turrets/tower_ninja_smoke_0-0.png",
+  "texturePaths": [
+    "./data/Turrets/tower_ninja_smoke_0-2.png",
+    "./data/Turrets/tower_ninja_smoke_0-3.png",
+    "./data/Turrets/tower_ninja_smoke_0-4.png"
+  ],
   "defaultFrameWidth": 32,  
   "defaultFrameHeight": 32,
 

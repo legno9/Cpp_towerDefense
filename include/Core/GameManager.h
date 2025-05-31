@@ -12,6 +12,7 @@ namespace sf
 
 class World;
 class MouseManager;
+class Player;
 
 class GameManager
 {
@@ -34,11 +35,17 @@ class GameManager
 		void update(uint32_t deltaMilliseconds);
 		void render();
 
-		void onTileClicked(sf::Vector2f tileCoordinates);
+		void startWaves();
+
+		void createTurret(sf::Vector2f tileCoordinates, GameObjectType turretType);
+		void upgradeTurret(sf::Vector2f tileCoordinates);
+		void sellTurret(sf::Vector2f tileCoordinates);
+		bool isTurretCreated(sf::Vector2f tileCoordinates) const;
 
 	private:
 
 		std::unique_ptr<sf::RenderWindow> m_window {nullptr};
 		std::unique_ptr<MouseManager> m_mouseManager {nullptr};
 		std::unique_ptr<World> m_world {nullptr};
+		std::unique_ptr<Player> m_player {nullptr};
 };
