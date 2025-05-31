@@ -1,6 +1,6 @@
 {
-  "texturePath": "data/Projectiles/bullet.png",
-  "speed": 600.0,
+  "texturePath": "data/Projectiles/blowdart.png",
+  "speed": 400.0,
   "rotationSpeed": 300.0,
-  "spriteScale": 1.5
+  "spriteScale": 2
 }

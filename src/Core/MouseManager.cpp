@@ -4,9 +4,10 @@
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <Render/SFMLOrthogonalLayer.h>
 #include <Core/GameManager.h>
 #include <Core/RenderManager.h>
+#include <Render/SFMLOrthogonalLayer.h>
+
 
 MouseManager::MouseManager(sf::RenderWindow& window, GameManager& gameManager)
     : m_window(window),
@@ -90,10 +91,12 @@ void MouseManager::update()
         sf::Vector2f worldTilePosition (tileCoordinates.x * m_currentTileSize.x, tileCoordinates.y * m_currentTileSize.y);
         m_tileIndicator->setPosition(worldTilePosition);
         
-        if (isLeftClicked)
+        if (isLeftClicked && 
+            std::find(m_turretTiles.begin(), m_turretTiles.end(), tileCoordinates) == m_turretTiles.end())
         {
             sf::Vector2f wordlTileCenter = worldTilePosition + sf::Vector2f(m_currentTileSize.x / 2.0f, m_currentTileSize.y / 2.0f);
             m_gameManager.onTileClicked(wordlTileCenter);
+            m_turretTiles.push_back(tileCoordinates);
         }
     }
     else

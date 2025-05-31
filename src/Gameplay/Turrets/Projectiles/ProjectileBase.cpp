@@ -6,13 +6,10 @@
 #include <Core/AssetManager.h>
 #include <Core/RenderManager.h>
 
-ProjectileBase::ProjectileBase(const sf::Vector2f& spawnPosition, const std::string& configPath, 
-    EnemyBase* targetEnemy,float damageFromTurret)
+ProjectileBase::ProjectileBase(const sf::Vector2f& spawnPosition, const std::string& configPath, float damageFromTurret)
     :GameObject(spawnPosition.x, spawnPosition.y), 
-    m_damage(damageFromTurret),
-    m_targetEnemy(targetEnemy)
+    m_damage(damageFromTurret)
 {
-
     nlohmann::json projectileJson = JsonManager::getInstance().loadConfigFile(configPath);
 
     if (projectileJson.is_null() || projectileJson.empty()) 
@@ -46,11 +43,11 @@ ProjectileBase::~ProjectileBase()
     }
 }
 
-void ProjectileBase::update(uint32_t deltaTime)
+void ProjectileBase::update(uint32_t deltaMilliseconds)
 {
     if (m_markedForRemoval) return;
 
-    move(deltaTime);
+    move(deltaMilliseconds);
 
     if (m_sprite) 
     {

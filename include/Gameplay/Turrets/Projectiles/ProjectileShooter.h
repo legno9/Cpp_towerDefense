@@ -3,13 +3,11 @@
 #include <Gameplay/Turrets/Projectiles/ProjectileBase.h>
 #include <SFML/System/Vector2.hpp>
 
-class EnemyBase;
-
 class ProjectileShooter : public ProjectileBase
 {
 public:
     ProjectileShooter(const sf::Vector2f& spawnPosition, const std::string& configPath,
-    float damageFromTurret, EnemyBase* targetEnemy);
+    unsigned int targetEnemyId, float damageFromTurret);
 
     ~ProjectileShooter() override = default;
 
@@ -17,6 +15,6 @@ public:
     void hit() override;                 
 
 protected:
-    EnemyBase* m_actualTargetEnemy;
-    float m_rotationSpeed; 
+    float m_rotationSpeed {0.0f}; 
+    unsigned int m_targetEnemyId {0};
 };

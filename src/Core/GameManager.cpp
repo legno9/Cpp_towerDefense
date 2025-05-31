@@ -134,6 +134,6 @@ void GameManager::render()
 void GameManager::onTileClicked(sf::Vector2f mousePosition)
 {
 	assert(m_world != nullptr && "GameManager::onTileClicked() world is nullptr");
-	GameObjectManager::getInstance().spawnTurret(GameObjectType::ShooterTurret, static_cast<sf::Vector2f>(mousePosition));
+	GameObjectManager::getInstance().spawnTurret(GameObjectType::AreaDamageTurret, static_cast<sf::Vector2f>(mousePosition));
 	m_world->startCurrentLevelWaves();
 }

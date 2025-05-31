@@ -1,0 +1,14 @@
+{
+  "damage": 0.0,
+  "actionRange": 150.0,
+  "actionRate": 3,
+  "buyPrice": 50,
+  "sellPrice": 25,
+  "upgradePrice": 50,
+  "maxLevel": 3,
+  "animationDataPath": "./data/Animations/Turrets/turretSlownessAnim.json",
+  "spriteScale": 1.5,
+  "projectileType": "SlownessProjectile",
+  "projectileConfigPath": "./data/Config/Turrets/Projectiles/slownessProjectileConfig.json"
+
+}

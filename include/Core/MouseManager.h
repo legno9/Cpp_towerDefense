@@ -1,8 +1,10 @@
 #pragma once
 
 #include <Memory>
+#include <map>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <Utils/Common.h>
 
 namespace sf
 {
@@ -32,7 +34,8 @@ class MouseManager
         GameManager& m_gameManager;
         sf::RenderWindow& m_window;
         
-        MapLayer* m_towersLayer;
+        MapLayer* m_towersLayer { nullptr };
+        std::vector<sf::Vector2u> m_turretTiles;
 
         std::unique_ptr<sf::RectangleShape> m_tileIndicator{ nullptr };
 

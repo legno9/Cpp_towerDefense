@@ -10,7 +10,8 @@
 struct AnimationFrame
 {
     sf::IntRect textureRect {0, 0, 0, 0}; 
-    float duration {0.0f};         
+    float duration {0.0f};     
+    bool eventTrigger{false}; 
 };
 
 struct Animation

@@ -8,6 +8,7 @@ void from_json(const nlohmann::json& j, AnimationFrame& p) {
     int row = j.at("row").get<int>();
     int col = j.at("col").get<int>();
     p.duration = j.at("duration").get<float>();
+    p.eventTrigger = j.value("eventTrigger", false);
     p.textureRect = sf::IntRect(col, row, 1, 1);
 }
 

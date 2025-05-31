@@ -1,7 +1,7 @@
 {
-  "texturePath": "./data/Turrets/tower_ninja_poison_0-0.png",
-  "defaultFrameWidth": 32,  
-  "defaultFrameHeight": 32,
+  "texturePath": "./data/Turrets/tower_ninja_gun_0-0.png",
+  "defaultFrameWidth": 48,  
+  "defaultFrameHeight": 48,
 
   "animations": 
   {
@@ -23,14 +23,11 @@
       [
         { "row": 0, "col": 2, "duration": 0.1 },
         { "row": 0, "col": 3, "duration": 0.1 },
-        { "row": 0, "col": 4, "duration": 0.1 },
+        { "row": 0, "col": 4, "duration": 0.1, "eventTrigger": true },
         { "row": 0, "col": 5, "duration": 0.1 },
         { "row": 0, "col": 6, "duration": 0.1 },
-        { "row": 0, "col": 7, "duration": 0.1, "eventTrigger": true },
-        { "row": 0, "col": 8, "duration": 0.1 },
-        { "row": 0, "col": 9, "duration": 0.1 },
-        { "row": 0, "col": 10, "duration": 0.1 },
-        { "row": 0, "col": 11, "duration": 0.1 }
+        { "row": 0, "col": 7, "duration": 0.1 },
+        { "row": 0, "col": 8, "duration": 0.1 }
       ]
     },
     "idle_east": 
@@ -51,14 +48,11 @@
       [
         { "row": 1, "col": 2, "duration": 0.1 },
         { "row": 1, "col": 3, "duration": 0.1 },
-        { "row": 1, "col": 4, "duration": 0.1 },
+        { "row": 1, "col": 4, "duration": 0.1, "eventTrigger": true},
         { "row": 1, "col": 5, "duration": 0.1 },
         { "row": 1, "col": 6, "duration": 0.1 },
-        { "row": 1, "col": 7, "duration": 0.1,"eventTrigger": true },
-        { "row": 1, "col": 8, "duration": 0.1 },
-        { "row": 1, "col": 9, "duration": 0.1 },
-        { "row": 1, "col": 10, "duration": 0.1 },
-        { "row": 1, "col": 11, "duration": 0.1 }
+        { "row": 1, "col": 7, "duration": 0.1 },
+        { "row": 1, "col": 8, "duration": 0.1 }
       ]
     },
     "idle_west": 
@@ -79,14 +73,11 @@
       [
         { "row": 2, "col": 2, "duration": 0.1 },
         { "row": 2, "col": 3, "duration": 0.1 },
-        { "row": 2, "col": 4, "duration": 0.1 },
+        { "row": 2, "col": 4, "duration": 0.1, "eventTrigger": true },
         { "row": 2, "col": 5, "duration": 0.1 },
         { "row": 2, "col": 6, "duration": 0.1 },
-        { "row": 2, "col": 7, "duration": 0.1,"eventTrigger": true },
-        { "row": 2, "col": 8, "duration": 0.1 },
-        { "row": 2, "col": 9, "duration": 0.1 },
-        { "row": 2, "col": 10, "duration": 0.1 },
-        { "row": 2, "col": 11, "duration": 0.1 }
+        { "row": 2, "col": 7, "duration": 0.1 },
+        { "row": 2, "col": 8, "duration": 0.1 }
       ]
     },
     "idle_north": 
@@ -107,14 +98,11 @@
       [
         { "row": 3, "col": 2, "duration": 0.1 },
         { "row": 3, "col": 3, "duration": 0.1 },
-        { "row": 3, "col": 4, "duration": 0.1 },
+        { "row": 3, "col": 4, "duration": 0.1, "eventTrigger": true },
         { "row": 3, "col": 5, "duration": 0.1 },
         { "row": 3, "col": 6, "duration": 0.1 },
-        { "row": 3, "col": 7, "duration": 0.1,"eventTrigger": true },
-        { "row": 3, "col": 8, "duration": 0.1 },
-        { "row": 3, "col": 9, "duration": 0.1 },
-        { "row": 3, "col": 10, "duration": 0.1 },
-        { "row": 3, "col": 11, "duration": 0.1 }
+        { "row": 3, "col": 7, "duration": 0.1 },
+        { "row": 3, "col": 8, "duration": 0.1 }
 
       ]
     }

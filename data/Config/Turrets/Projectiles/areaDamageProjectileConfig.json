@@ -1,0 +1,6 @@
+{
+  "texturePath": "data/Projectiles/bullet.png",
+  "speed": 400.0,
+  "spriteScale": 4.0,
+  "areaOfEffectRadius": 75.0
+}

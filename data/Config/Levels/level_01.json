@@ -17,13 +17,25 @@
     },
     {
       "waveNumber": 2,
-      "delayBeforeWave": 10.0,
+      "delayBeforeWave": 5.0,
       "spawns": [
+        {
+          "type": "InvisibleEnemy",
+          "configPath": "data/Config/Enemies/enemyInvisibleConfig.json",
+          "spawnInterval": 2,
+          "count": 2
+        },
         {
           "type": "BasicEnemy",
           "configPath": "data/Config/Enemies/enemyBasicConfig.json",
-          "spawnInterval": 0.5,
-          "count": 8
+          "spawnInterval": 1.0,
+          "count": 3
+        },
+        {
+          "type": "FastEnemy",
+          "configPath": "data/Config/Enemies/enemyFastConfig.json",
+          "spawnInterval": 1.5,
+          "count": 5
         }
       ]
     }

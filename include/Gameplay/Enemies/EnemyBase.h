@@ -18,13 +18,31 @@ public:
     void update(uint32_t deltaTime) override;
 
     virtual void receiveDamage(float damage);
+    virtual void reduceSpeed(float reductionAmount, float speedReductionDuration);
     virtual void die();
+    virtual bool isTargetable() const { return true; }
+
+    void predictDamage(float damageAmount);
+    bool isPredictedDead() const { return m_predictedHealth <= 0.0f; }
+    float getPredictedHealth() const { return m_predictedHealth; }
+
+    float getMaxHealth() const { return m_maxHealth; }
+    float getCurrentHealth() const { return m_currentHealth; }
+
+    float getDistanceAlongPath() const {return m_distanceCoveredTotal; }
 
 protected:
     float m_maxHealth { 0.0f };
     float m_currentHealth { 0.0f };
-    float m_speed { 0.0f };
+    float m_maxSpeed { 0.0f };
+    float m_currentSpeed { 0.0f };
+    float m_speedReductionDuration { 0.0f };
     int m_goldValue { 0 };
+
+    float m_distanceCoveredTotal{0.0f};
+    float m_totalPathLength{0.0f}; 
+
+    float m_predictedHealth { 0.0f };
 
     std::unique_ptr<sf::Sprite> m_sprite { nullptr };
     std::unique_ptr<AnimationComponent> m_animationComponent { nullptr };

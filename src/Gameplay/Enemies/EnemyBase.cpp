@@ -21,6 +21,18 @@ EnemyBase::EnemyBase(const sf::Vector2f& initialPosition, const std::string& con
 
     applyConfig(enemyJson);
 
+    if (m_pathPoints.size() > 1) {
+        for (size_t i = 0; i < m_pathPoints.size() - 1; ++i) 
+        {
+            sf::Vector2f segmentVector = m_pathPoints[i + 1] - m_pathPoints[i];
+            m_totalPathLength += std::hypot(segmentVector.x, segmentVector.y);
+        }
+    }
+    else 
+    {
+        m_totalPathLength = 0.0f;
+    }
+
     m_sprite = std::make_unique<sf::Sprite>();
 
     std::string animationPath =  JsonManager::getInstance().getString(enemyJson, "animationDataPath");
@@ -47,7 +59,9 @@ void EnemyBase::applyConfig(const nlohmann::json& configData)
 {
     m_maxHealth = JsonManager::getInstance().getFloat(configData, "health");
     m_currentHealth = m_maxHealth;
-    m_speed = JsonManager::getInstance().getFloat(configData, "speed");
+    m_predictedHealth = m_maxHealth;
+    m_maxSpeed = JsonManager::getInstance().getFloat(configData, "speed");
+    m_currentSpeed = m_maxSpeed;
     m_goldValue = JsonManager::getInstance().getInt(configData, "goldValue");
 }
 
@@ -69,7 +83,17 @@ void EnemyBase::update(uint32_t deltaMilliseconds)
 
     if (m_currentHealth <= 0) 
     {
+        m_markedForRemoval = true;
         die();
+    }
+
+    if (m_speedReductionDuration > 0.0f) 
+    {
+        m_speedReductionDuration -= static_cast<float>(deltaMilliseconds) / 1000.0f;
+        if (m_speedReductionDuration <= 0.0f) 
+        {
+            m_currentSpeed = m_maxSpeed;
+        }
     }
 }
 
@@ -78,7 +102,7 @@ void EnemyBase::move(uint32_t deltaMilliseconds)
     if (m_pathPoints.empty()) return;
 
     float deltaSeconds = static_cast<float>(deltaMilliseconds) / 1000.0f;
-    float distanceToMove = m_speed * deltaSeconds;
+    float distanceToMove = m_currentSpeed * deltaSeconds;
     sf::Vector2f lastMovementDirection = sf::Vector2f(0.0f, 0.0f);
 
     while (distanceToMove > 0.0f && m_currentPathIndex < m_pathPoints.size())
@@ -86,6 +110,7 @@ void EnemyBase::move(uint32_t deltaMilliseconds)
         if (m_currentPathIndex >= m_pathPoints.size() - 1)
         {
             m_position = m_pathPoints.back();
+            m_distanceCoveredTotal = m_totalPathLength; 
             m_markedForRemoval = true;
             return;
         }
@@ -109,12 +134,14 @@ void EnemyBase::move(uint32_t deltaMilliseconds)
         {
             m_position = endPoint;
             distanceToMove -= distanceToEnd;
+            m_distanceCoveredTotal += distanceToEnd;
             m_currentPathIndex++;
             lastMovementDirection = normalizedDirection;
         }
         else
         {
             m_position += normalizedDirection * distanceToMove;
+            m_distanceCoveredTotal += distanceToMove;
             lastMovementDirection = normalizedDirection;
             distanceToMove = 0.0f;
             break;
@@ -130,7 +157,7 @@ void EnemyBase::move(uint32_t deltaMilliseconds)
         }
         else 
         {
-            m_animationComponent->play("idle_south");
+            m_animationComponent->play("idle");
         }
     }
 }
@@ -148,8 +175,23 @@ void EnemyBase::receiveDamage(float damage)
     //Hit effect
 }
 
+void EnemyBase::reduceSpeed(float reductionFactor, float speedReductionDuration)
+{
+    if (m_maxSpeed * (1.0f - reductionFactor) <= m_currentSpeed)
+    {
+        m_currentSpeed *= (1.0f - reductionFactor);
+        m_speedReductionDuration = speedReductionDuration;
+    }  
+}
+
 void EnemyBase::die()
 {
     std::cout << "Enemy died! Awarded " << m_goldValue << " gold." << std::endl;
     
 }
+
+void EnemyBase::predictDamage(float damageAmount)
+{
+    m_predictedHealth -= damageAmount;
+}
+

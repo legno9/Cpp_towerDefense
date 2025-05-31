@@ -1,0 +1,9 @@
+{
+  "texturePath": "data/Projectiles/smokebomb.png",
+  "speed": 400.0,
+  "spriteScale": 2.0,
+  "areaOfEffectRadius": 25.0,
+  "slownessFactor": 0.4,
+  "slownessDuration": 0.5,
+  "projectileDuration": 5.0
+}

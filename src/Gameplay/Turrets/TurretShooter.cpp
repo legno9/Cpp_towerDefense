@@ -5,8 +5,3 @@ TurretShooter::TurretShooter(const sf::Vector2f& position, const std::string& co
 {
 
 }
-
-void TurretShooter::action()
-{
-
-}

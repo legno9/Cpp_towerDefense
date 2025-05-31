@@ -2,7 +2,11 @@
 #include <iostream>
 #include <Core/AssetManager.h>
 #include <Core/RenderManager.h>
+#include <Core/GameObjectManager.h>
 #include <Core/JsonManager.h>
+#include <Gameplay/Enemies/EnemyBase.h>
+#include <Gameplay/Enemies/EnemyInvisible.h>
+#include <Utils/Common.h>
 
 TurretBase::TurretBase(const sf::Vector2f& position, const std::string& configPath)
     : GameObject(position.x, position.y)
@@ -47,7 +51,6 @@ TurretBase::~TurretBase()
 void TurretBase::applyConfig(const nlohmann::json& configData)
 {
     m_damage = JsonManager::getInstance().getFloat(configData, "damage");
-    m_areaDamage = JsonManager::getInstance().getFloat(configData, "areaDamage");
     m_actionRange = JsonManager::getInstance().getFloat(configData, "actionRange");
     m_actionRate = JsonManager::getInstance().getFloat(configData, "actionRate");
 
@@ -56,30 +59,14 @@ void TurretBase::applyConfig(const nlohmann::json& configData)
     m_upgradePrice = JsonManager::getInstance().getInt(configData, "upgradePrice");
     m_maxLevel = JsonManager::getInstance().getInt(configData, "maxLevel");
 
-    m_flags = TurretFlags::None;
-    if (configData.contains("flags") && configData["flags"].is_array()) 
-    {
-        for (const auto& flagStrJson : configData["flags"]) 
-        {
-            if (flagStrJson.is_string()) 
-            {
-                std::string currentFlagStr = flagStrJson.get<std::string>();
-
-                auto it = flagMap.find(currentFlagStr);
-               
-                if (it == flagMap.end()) 
-                {
-                    std::cerr << "WARNING: Unknown TurretFlag '" << currentFlagStr << "' in config for " << configData.dump() << std::endl;
-                    continue;
-                } 
-                m_flags |= it->second;
-            }
-        }
-    }
+    m_projectileType = JsonManager::getInstance().getString(configData, "projectileType");
+    m_projectileConfigPath = JsonManager::getInstance().getString(configData, "projectileConfigPath");
 }
 
 void TurretBase::update(uint32_t deltaMilliseconds)
 {
+    float deltaSeconds = static_cast<float>(deltaMilliseconds) / 1000.0f;
+
     if (m_markedForRemoval) return;
     
     if (m_animationComponent)
@@ -87,22 +74,130 @@ void TurretBase::update(uint32_t deltaMilliseconds)
         m_animationComponent->update(deltaMilliseconds);
     }
 
-    m_actionTimer += deltaMilliseconds;
-    if (m_actionTimer >= m_actionRate)
+    m_actionTimer += deltaSeconds;
+
+    unsigned int targetEnemyId = getLeadEnemy();
+    updateFacingDirection(targetEnemyId);
+    
+    if (targetEnemyId != 0 && m_actionTimer >= m_actionRate)
     {
-        action();
-        m_actionTimer = 0.0f;
+        action(targetEnemyId);
+    }
+}
+
+unsigned int TurretBase::getLeadEnemy()
+{
+    std::vector<unsigned int> enemiesInRangeIds = GameObjectManager::getInstance().getEnemiesInRadius(m_position, m_actionRange);
+    
+    unsigned int targetEnemyId = 0;
+    float furthestDistanceAlongPath = -1.0f;
+
+    for (unsigned int enemyId : enemiesInRangeIds)
+    {
+        GameObject* rawEnemy = GameObjectManager::getInstance().getGameObjectById(enemyId);
+        EnemyBase* enemy = dynamic_cast<EnemyBase*>(rawEnemy);
+
+        if (enemy && !enemy->isMarkedForRemoval() && !enemy->isPredictedDead() && enemy->isTargetable())
+        {
+            try 
+            {
+                float enemyProgress = enemy->getDistanceAlongPath();
+
+                if (enemyProgress > furthestDistanceAlongPath)
+                {
+                    furthestDistanceAlongPath = enemyProgress;
+                    targetEnemyId = enemyId;
+                }
+            } 
+            catch (const std::exception& e) 
+            {
+                std::cerr << "WARNING: getLeadEnemy: Exception calling getDistanceAlongPath() for enemy ID " << enemyId << ": " << e.what() << ". Skipping this enemy." << std::endl;
+            }
+        }
+    }
+    
+    return targetEnemyId;
+}
+
+void TurretBase::updateFacingDirection(unsigned int targetEnemyId)
+{
+    if (m_isAttacking) {return;}
+
+    if (m_animationComponent)
+    {
+        if (targetEnemyId != 0) 
+        {
+            GameObject* rawTarget = GameObjectManager::getInstance().getGameObjectById(targetEnemyId);
+            EnemyBase* targetEnemy = dynamic_cast<EnemyBase*>(rawTarget);
+            
+            if (targetEnemy != nullptr && !targetEnemy->isMarkedForRemoval())
+            {
+                sf::Vector2f directionToTarget = targetEnemy->getPosition() - m_position;
+                m_animationComponent->SetDirectionFromVector(directionToTarget);
+            }
+        }
+        else
+        {
+            m_animationComponent->setDirection(Direction::South);
+        }
+    }
+}
+
+void TurretBase::action(unsigned int currentTargetEnemyId)
+{
+    if (currentTargetEnemyId == 0)
+    {
+        return;
+    }
+
+    GameObject* rawTarget = GameObjectManager::getInstance().getGameObjectById(currentTargetEnemyId);
+    EnemyBase* targetEnemy = dynamic_cast<EnemyBase*>(rawTarget);
+
+    if (!targetEnemy || targetEnemy->isMarkedForRemoval()) 
+    {
+        std::cerr << "WARNING: TurretBase::action() target ID " << currentTargetEnemyId << " became invalid during action execution." << std::endl;
+        return;
+    }
+
+    targetEnemy->predictDamage(m_damage);
+    m_actionTimer = 0.0f;
+    performAttack(currentTargetEnemyId);
+}
+
+void TurretBase::performAttack(unsigned int targetEnemyId)
+{
+    m_isAttacking = true;
+
+    if (m_animationComponent) 
+    {
+        m_animationComponent->play("shoot", true);
+        m_animationComponent->onFrameEvent = [this, targetEnemyId](const std::string& animName, int frameIdx) 
+        {
+            if (animName == "shoot") 
+            { 
+                GameObjectManager::getInstance().spawnProjectile
+                ( 
+                    stringToGameObjectType(m_projectileType),
+                    m_position,                      
+                    m_projectileConfigPath,                          
+                    targetEnemyId,
+                    m_damage                       
+                );
+                m_animationComponent->onFrameEvent = nullptr;
+            }
+        };
+        m_animationComponent->onAnimationEnd = [this]() 
+        {
+            m_isAttacking = false;
+            m_animationComponent->play("idle");
+        };
+        
     }
 }
 
 void TurretBase::upgrade(const nlohmann::json& json)
 {
 
-}
-
-void TurretBase::action()
-{
-    
 }
 
 void TurretBase::sell()

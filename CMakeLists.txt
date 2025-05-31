@@ -38,12 +38,18 @@ set(PROJECT_HEADERS
     include/Gameplay/World.h
     include/Gameplay/Level.h
     include/Gameplay/GameObject.h
+    include/Gameplay/Player.h
     
     include/Gameplay/Enemies/EnemyBase.h
     include/Gameplay/Enemies/EnemyBasic.h
+    include/Gameplay/Enemies/EnemyFast.h
+    include/Gameplay/Enemies/EnemyInvisible.h
 
     include/Gameplay/Turrets/TurretBase.h
     include/Gameplay/Turrets/TurretShooter.h
+    include/Gameplay/Turrets/TurretSlowness.h
+    include/Gameplay/Turrets/TurretAreaDamage.h
+
     include/Gameplay/Turrets/Projectiles/ProjectileBase.h
     include/Gameplay/Turrets/Projectiles/ProjectileShooter.h
     include/Gameplay/Turrets/Projectiles/ProjectileSlowness.h
@@ -68,17 +74,24 @@ set(PROJECT_SOURCES
 
     src/Gameplay/World.cpp
     src/Gameplay/Level.cpp
+    src/Gameplay/Player.cpp
 
     src/Gameplay/Enemies/EnemyBase.cpp
     src/Gameplay/Enemies/EnemyBasic.cpp
+    src/Gameplay/Enemies/EnemyFast.cpp
+    src/Gameplay/Enemies/EnemyInvisible.cpp
 
     src/Gameplay/Turrets/TurretBase.cpp
     src/Gameplay/Turrets/TurretShooter.cpp
-    
+    src/Gameplay/Turrets/TurretSlowness.cpp
+    src/Gameplay/Turrets/TurretAreaDamage.cpp
+
     src/Gameplay/Turrets/Projectiles/ProjectileBase.cpp
     src/Gameplay/Turrets/Projectiles/ProjectileShooter.cpp
     src/Gameplay/Turrets/Projectiles/ProjectileSlowness.cpp
     src/Gameplay/Turrets/Projectiles/ProjectileAreaDamage.cpp
+
+    src/Utils/Common.cpp
 
     src/Render/SFMLOrthogonalLayer.cpp
 
@@ -119,13 +132,15 @@ if(WIN32)
 endif()
 
 # TO-DO 
-# - 3 tipos de torres.
-# - 3 tipos de enemigos.
-# - Sistema de proyectiles que surgen de las torres hacia los enemigos, 2 tipos de proyectiles.
+
+# - Smokebomb 
+
+# - Mejorar torres.
 
 # - Sistema de recursos con los que comprar torres y mejorarlas. Se obtiene de los enemigos.
 # - Zona de la base, si un enemigo llega a la base se pierde vida. Sistema de vida.
-# - Sistema de puntuacion
 
 # - Sistema de interfaz de usuario con botones para comprar torres y mejorarlas.
 # - Pantalla de inicio, pausa, fin de juego.
+
+# - Montar niveles

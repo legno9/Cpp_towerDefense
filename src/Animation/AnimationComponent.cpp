@@ -4,12 +4,7 @@
 #include <corecrt_math_defines.h>
 
 AnimationComponent::AnimationComponent(sf::Sprite& targetSprite, const std::string& animationConfigPath)
-    : m_targetSprite(targetSprite),
-      m_isPlaying(false),
-      m_currentTime(0.0f),
-      m_currentFrameIndex(0),
-      m_currentAnimation(nullptr),
-      m_currentDirection(Direction::South)
+    : m_targetSprite(targetSprite)
 {
     m_animationData = &AnimationDataManager::getInstance().getSpriteSheetData(animationConfigPath);
     
@@ -28,7 +23,8 @@ void AnimationComponent::update(uint32_t deltaMilliseconds)
     {
         if (m_currentAnimation->loop)
         {
-            m_currentTime = fmod(m_currentTime, m_currentAnimation->totalDuration); 
+            m_currentTime = fmod(m_currentTime, m_currentAnimation->totalDuration);
+            m_lastEventFrameIndex = -1; 
         }
         else
         {
@@ -37,6 +33,11 @@ void AnimationComponent::update(uint32_t deltaMilliseconds)
             m_currentFrameIndex = m_currentAnimation->frames.size() - 1;
             
             m_targetSprite.setTextureRect(m_currentAnimation->frames[m_currentFrameIndex].textureRect);
+
+            if (onAnimationEnd)
+            {
+                onAnimationEnd();
+            }
 
             return;
         }
@@ -56,6 +57,16 @@ void AnimationComponent::update(uint32_t deltaMilliseconds)
         }
     }
 
+    if (m_currentFrameIndex != m_lastEventFrameIndex && 
+        m_currentAnimation->frames[m_currentFrameIndex].eventTrigger) 
+    {
+        if (onFrameEvent)
+        {
+            onFrameEvent(m_baseAnimationName, m_currentFrameIndex); 
+        }
+        m_lastEventFrameIndex = m_currentFrameIndex; 
+    }
+
     m_targetSprite.setTextureRect(m_currentAnimation->frames[m_currentFrameIndex].textureRect);
 }
 
@@ -63,7 +74,7 @@ void AnimationComponent::play(const std::string& animationName, bool forceRestar
 {
     std::string actualAnimationName = getAnimationNameForDirection(animationName, m_currentDirection);
 
-    if (m_currentAnimationName == actualAnimationName && m_isPlaying && !forceRestart)
+    if (m_completeAnimationName == actualAnimationName && m_isPlaying && !forceRestart)
     {
         return;
     }
@@ -78,14 +89,23 @@ void AnimationComponent::play(const std::string& animationName, bool forceRestar
     }
 
     m_currentAnimation = &it->second;
-    m_currentAnimationName = actualAnimationName;
+    m_completeAnimationName = actualAnimationName;
+    m_baseAnimationName = animationName;
     m_currentTime = 0.0f;
     m_currentFrameIndex = 0;
     m_isPlaying = true;
+    m_lastEventFrameIndex = -1;
 
     if (!m_currentAnimation->frames.empty())
     {
         m_targetSprite.setTextureRect(m_currentAnimation->frames[m_currentFrameIndex].textureRect);
+        if (m_currentAnimation->frames[0].eventTrigger) 
+        {
+            if (onFrameEvent)
+            {
+                onFrameEvent(m_baseAnimationName, m_currentFrameIndex); 
+            }
+        }        
     }
     else
     {
@@ -110,17 +130,7 @@ void AnimationComponent::setDirection(Direction direction)
     
     if (m_isPlaying && m_currentAnimation) 
     {
-        std::string baseName;
-        
-        size_t last_underscore = m_currentAnimationName.find_last_of('_');
-        if (last_underscore != std::string::npos) 
-        {
-            baseName = m_currentAnimationName.substr(0, last_underscore);
-        } else 
-        {
-            baseName = m_currentAnimationName; 
-        }
-        play(baseName, true);
+        play(m_baseAnimationName, true);
     }
 }
 
@@ -167,5 +177,17 @@ std::string AnimationComponent::getAnimationNameForDirection(const std::string& 
         default: return baseAnimationName;
     }
     return baseAnimationName + "_" + directionSuffix;
+}
+
+void AnimationComponent::changeConfigPath(const std::string& newConfigPath)
+{
+    m_animationData = &AnimationDataManager::getInstance().getSpriteSheetData(newConfigPath);
+    m_spriteSheetTexture = &AnimationDataManager::getInstance().getSpriteSheetTexture(m_animationData->texturePath);
+    m_targetSprite.setTexture(*m_spriteSheetTexture);
+
+    if (m_isPlaying && m_currentAnimation) 
+    {
+        play(m_baseAnimationName, true);
+    }
 }
 

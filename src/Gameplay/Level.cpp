@@ -11,8 +11,8 @@ void from_json(const nlohmann::json& j, GameObjectType& p)
 {
     std::string typeStr = j.get<std::string>();
     if (typeStr == "BasicEnemy") p = GameObjectType::BasicEnemy;
-    else if (typeStr == "ShooterTurret") p = GameObjectType::ShooterTurret;
     else if (typeStr == "InvisibleEnemy") p = GameObjectType::InvisibleEnemy;
+    else if (typeStr == "FastEnemy") p = GameObjectType::FastEnemy;
     else 
     {
         std::cerr << "WARNING: Unknown GameObjectType string in JSON: " << typeStr << std::endl;
