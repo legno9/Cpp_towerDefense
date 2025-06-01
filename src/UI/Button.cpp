@@ -56,15 +56,17 @@ void Button::update(uint32_t deltaMiliseconds, const sf::Vector2f mousePos)
     }
 }
 
-void Button::handleEvent(const sf::Event& event, const sf::RenderWindow& window) 
+bool Button::handleEvent(const sf::Event& event, const sf::RenderWindow& window) 
 {
     sf::Vector2f mouseFloatPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+    m_interacted = false;
 
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) 
         {
             if (contains(mouseFloatPos)) {
                 m_isPressed = true;
+                m_interacted = true;
                 m_shape.setFillColor(m_clickedColor);
             }
         }
@@ -87,6 +89,8 @@ void Button::handleEvent(const sf::Event& event, const sf::RenderWindow& window)
             m_shape.setFillColor(m_isHovered ? m_hoverColor : m_normalColor);
         }
     }
+
+    return m_interacted;
 }
 
 bool Button::contains(const sf::Vector2f& mousePos) const 

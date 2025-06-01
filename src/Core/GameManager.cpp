@@ -15,7 +15,7 @@ GameManager::GameManager() = default;
 
 GameManager::~GameManager()
 {
-    GameObjectManager::getInstance().removeAllGameObjects();
+    GameObjectManager::getInstance().removeAllGameObjects(true);
 
     if (m_world)
     {
@@ -66,7 +66,7 @@ bool GameManager::init(const std::string& configPath)
     }
 	
 	RenderManager::initialize(*m_window);
-    m_player = std::make_unique<Player>(startingHealth, startingGold); 
+    m_player = std::make_unique<Player>(startingHealth, startingGold, *this); 
 	m_mouseManager = std::make_unique<MouseManager>(*m_window, *this , *m_player);
 	m_world = std::make_unique<World>();
     GameObjectManager::getInstance().setPlayer(m_player.get());
@@ -273,5 +273,19 @@ void GameManager::onTileClicked(const sf::Vector2f& tileCoordinates)
             return;
         }
         sellTurret(tileCoordinates);
+    }
+}
+
+void GameManager::resetLevel()
+{
+    if (m_world)
+    {
+        m_world->resetLevel();
+        m_mouseManager->setTowerLayer(m_world->getCurrentLevel()->getTowerLayer());
+        m_player->resetStats();
+    }
+    else
+    {
+        std::cerr << "ERROR: Cannot reset level, world is not initialized." << std::endl;
     }
 }

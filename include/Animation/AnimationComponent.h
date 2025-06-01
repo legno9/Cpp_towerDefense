@@ -9,6 +9,7 @@ class AnimationComponent
 {
 public:
     AnimationComponent(sf::Sprite& targetSprite, const std::string& animationConfigPath);
+    ~AnimationComponent() = default;
 
     void update(uint32_t deltaMilliseconds);
 
@@ -27,7 +28,7 @@ public:
     std::function<void()> onAnimationEnd;
 
 private:
-    sf::Sprite& m_targetSprite; 
+    sf::Sprite& m_targetSprite ; 
     sf::Texture* m_spriteSheetTexture { nullptr }; 
 
     const SpriteSheetAnimationData* m_animationData { nullptr };

@@ -30,7 +30,7 @@ class GameObjectManager
             const std::string& configPath, unsigned int targetEnemy, float damage);
     
 		void checkGameObjectsMarkedForRemoval();
-		void removeAllGameObjects();
+		void removeAllGameObjects(bool forceClear = false);
 
 		std::vector<unsigned int> getEnemiesInRadius(const sf::Vector2f& center, float radius) const;
 		TurretBase* getTurretByPos(sf::Vector2f) const;
@@ -55,14 +55,15 @@ class GameObjectManager
 
 		std::vector<std::unique_ptr<GameObject>> m_gameObjects {};
 		std::vector<std::unique_ptr<GameObject>> m_pendingGameObjects {};
-
 		std::unordered_map<unsigned int, GameObject*> m_idToObjectMap{};
+
 		std::unordered_map<GameObjectType, int> m_turretBuyPrices {};
 		std::unordered_map<GameObjectType, int> m_turretSellPrices {};
 		std::unordered_map<GameObjectType, int> m_turretUpgradePrices {};
 		std::unordered_map<GameObjectType, std::string> m_turretConfigPaths {};
 		std::unordered_map<GameObjectType, std::string> m_buildableTurrets {};
 		
+		bool m_fullClearPending { false}; 
 
 		unsigned int m_nextId{0};
 			

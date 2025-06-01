@@ -58,6 +58,14 @@ void GameObjectManager::registerTurretsPrices(GameObjectType type, const std::st
 
 void GameObjectManager::updateGameObjects(uint32_t deltaMiliseconds)
 {
+
+    if (m_fullClearPending)
+    {
+        m_gameObjects.clear(); 
+        m_idToObjectMap.clear(); 
+        m_fullClearPending = false;
+    }
+
     for (const auto& obj : m_gameObjects)
     {
         if (!obj) 
@@ -203,11 +211,17 @@ void GameObjectManager::checkGameObjectsMarkedForRemoval()
         m_gameObjects.end());
 }
 
-void GameObjectManager::removeAllGameObjects()
+void GameObjectManager::removeAllGameObjects(bool forceClear)
 {
-    m_gameObjects.clear();
+    m_fullClearPending = true;
     m_pendingGameObjects.clear();
-    m_idToObjectMap.clear();
+
+    if (forceClear)
+    {
+        m_gameObjects.clear();
+        m_idToObjectMap.clear();
+        m_fullClearPending = false; 
+    }
 }
 
 std::vector<unsigned int> GameObjectManager::getEnemiesInRadius(const sf::Vector2f& center, float radius) const

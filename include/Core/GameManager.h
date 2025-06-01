@@ -47,6 +47,8 @@ class GameManager
 		bool isTurretCreated(const sf::Vector2f& tileCoordinates) const;
 		void onTileClicked(const sf::Vector2f& tileCoordinates);
 
+		void resetLevel();
+
 	private:
 
 		std::unique_ptr<sf::RenderWindow> m_window {nullptr};

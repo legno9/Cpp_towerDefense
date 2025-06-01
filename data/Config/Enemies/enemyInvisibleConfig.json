@@ -1,7 +1,7 @@
 {
   "health": 200.0,
   "speed": 25.0,
-  "goldValue": 10,
+  "goldValue": 20,
   "spriteScale": 1.25,
   "animationDataPath": "data/Animations/Enemies/enemyInvisibleAnim.json",
   "invisibilityRevealedPath": "data/Animations/Enemies/enemyInvisibleRevealedAnim.json"

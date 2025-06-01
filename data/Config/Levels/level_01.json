@@ -11,7 +11,7 @@
           "type": "BasicEnemy",
           "configPath": "data/Config/Enemies/enemyBasicConfig.json",
           "spawnInterval": 0.5,
-          "count": 5
+          "count": 10
         }
       ]
     },
@@ -36,6 +36,54 @@
           "configPath": "data/Config/Enemies/enemyFastConfig.json",
           "spawnInterval": 1.5,
           "count": 5
+        }
+      ]
+    },
+    {
+      "waveNumber": 3,
+      "delayBeforeWave": 5.0,
+      "spawns": [
+        {
+          "type": "FastEnemy",
+          "configPath": "data/Config/Enemies/enemyFastConfig.json",
+          "spawnInterval": 0.5,
+          "count": 7
+        },
+        {
+          "type": "InvisibleEnemy",
+          "configPath": "data/Config/Enemies/enemyInvisibleConfig.json",
+          "spawnInterval": 1,
+          "count": 5
+        },
+        {
+          "type": "BasicEnemy",
+          "configPath": "data/Config/Enemies/enemyBasicConfig.json",
+          "spawnInterval": 1.0,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "waveNumber": 4,
+      "delayBeforeWave": 5.0,
+      "spawns": [
+        {
+          "type": "BasicEnemy",
+          "configPath": "data/Config/Enemies/enemyBasicConfig.json",
+          "spawnInterval": 1.0,
+          "count": 10
+        },
+        {
+          "type": "InvisibleEnemy",
+          "configPath": "data/Config/Enemies/enemyInvisibleConfig.json",
+          "spawnInterval": 2,
+          "count": 3
+        },
+        {
+          "type": "FastEnemy",
+          "configPath": "data/Config/Enemies/enemyFastConfig.json",
+          "spawnInterval": 1.5,
+          "count": 8
         }
       ]
     }

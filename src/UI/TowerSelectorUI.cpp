@@ -61,15 +61,19 @@ void TowerSelectorUI::update(uint32_t deltaMiliseconds, const sf::Vector2f mouse
     m_upgradeButton->update(deltaMiliseconds, mousePos);
 }
 
-void TowerSelectorUI::handleEvent(const sf::Event& event, const sf::RenderWindow& window) 
+bool TowerSelectorUI::handleEvent(const sf::Event& event, const sf::RenderWindow& window) 
 {
+    bool interacted = false;
+
     for (auto& button : m_towerButtons) 
     {
-        button->handleEvent(event, window);
+        interacted = interacted || button->handleEvent(event, window);
     }
 
-    m_sellButton->handleEvent(event, window);
-    m_upgradeButton->handleEvent(event, window);
+    interacted = interacted || m_sellButton->handleEvent(event, window);
+    interacted = interacted || m_upgradeButton->handleEvent(event, window);
+
+    return interacted;
 }
 
 
@@ -135,11 +139,14 @@ void TowerSelectorUI::onUpgradeButtonClicked()
     {
         m_upgradeButtonEnabled = false;
         m_gameManager.setPlayerActionState(PlayerActionState::None);
+        m_selectedTowerType = GameObjectType::None;
     } 
     else 
     {
         m_upgradeButtonEnabled = true;
         m_gameManager.setPlayerActionState(PlayerActionState::UpgradingTower);
+        m_selectedTowerType = GameObjectType::None;
+        m_sellButtonEnabled = false;
     }
 }
 
@@ -149,11 +156,14 @@ void TowerSelectorUI::onSellButtonClicked()
     {
         m_sellButtonEnabled = false;
         m_gameManager.setPlayerActionState(PlayerActionState::None);
+        m_selectedTowerType = GameObjectType::None;
     } 
     else 
     {
         m_sellButtonEnabled = true;
         m_gameManager.setPlayerActionState(PlayerActionState::SellingTower);
+        m_selectedTowerType = GameObjectType::None;
+        m_upgradeButtonEnabled = false;
         
     }
 }

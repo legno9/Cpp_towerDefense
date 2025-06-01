@@ -3,10 +3,12 @@
 #include <string>
 #include <iostream>
 
+class GameManager;
+
 class Player
 {
 public:
-    Player(int startingHealth, int startingGold);
+    Player(int startingHealth, int startingGold, GameManager& gameManager);
     ~Player() = default;
 
     int getCurrentHealth() const { return m_currentHealth; }
@@ -18,11 +20,14 @@ public:
 
     void receiveDamage(int amount);
     
-    void resetStats(int startingHealth, int startingGold);
+    void resetStats();
 
 private:
 
     int m_maxHealth {0};
     int m_currentHealth {0};
     int m_gold {0};
+    int m_startingGold {0};
+
+    GameManager& m_gameManager;
 };

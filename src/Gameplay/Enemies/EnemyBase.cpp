@@ -52,8 +52,14 @@ EnemyBase::EnemyBase(const sf::Vector2f& initialPosition, const std::string& con
 
 EnemyBase::~EnemyBase()
 {
+    if (m_animationComponent) 
+    {
+        m_animationComponent->stop();
+        m_animationComponent.reset();
+    }
     if (m_sprite) {
         RenderManager::getInstance().removeFromRenderQueue(*m_sprite, ZOrder::Foreground);
+        m_sprite.reset();
     }
 }
 

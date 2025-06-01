@@ -19,7 +19,7 @@ public:
     ~TowerSelectorUI() override;
 
     void update(uint32_t ddeltaMilisecondseltaTime, const sf::Vector2f mousePos);
-    void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
+    bool handleEvent(const sf::Event& event, const sf::RenderWindow& window);
 
     void initializeSelector(const std::unordered_map<GameObjectType, std::string>& buildableTowers);
 

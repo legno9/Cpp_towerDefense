@@ -109,15 +109,16 @@ void HUDManager::update(uint32_t deltaMiliseconds, const sf::Vector2f mousePos)
     }
 }
 
-void HUDManager::handleEvent(const sf::Event& event, const sf::RenderWindow& window) 
+bool HUDManager::handleEvent(const sf::Event& event, const sf::RenderWindow& window) 
 {
     if (m_towerSelectorUI) 
     {
-        m_towerSelectorUI->handleEvent(event, window);
+        return m_towerSelectorUI->handleEvent(event, window);
     } 
     else 
     {
         std::cerr << "ERROR: TowerSelectorUI is not initialized." << std::endl;
+        return false;
     }
 }
 

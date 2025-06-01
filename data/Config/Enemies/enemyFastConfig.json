@@ -1,7 +1,7 @@
 {
-  "health": 40.0,
-  "speed": 100.0,
-  "goldValue": 10,
+  "health": 100.0,
+  "speed": 125.0,
+  "goldValue": 20,
   "spriteScale": 1.25,
   "animationDataPath": "data/Animations/Enemies/enemyFastAnim.json"
 }

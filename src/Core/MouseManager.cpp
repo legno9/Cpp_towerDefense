@@ -67,13 +67,13 @@ void MouseManager::update()
 		{
 			m_window.close();
 		}
-	
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) 
-		{
-			isLeftClicked = true;
-		}
 
-        HUDManager::getInstance().handleEvent(event, m_window);
+        bool buttonInteracted = HUDManager::getInstance().handleEvent(event, m_window);
+
+		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && !buttonInteracted)
+        {
+            isLeftClicked = true;
+        }
 	}
     
     m_pos = sf::Mouse::getPosition(m_window);

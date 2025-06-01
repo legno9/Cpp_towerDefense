@@ -17,7 +17,7 @@ public:
     static void removeInstance();
 
     void update(uint32_t deltaMiliseconds, const sf::Vector2f mousePos);
-    void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
+    bool handleEvent(const sf::Event& event, const sf::RenderWindow& window);
 
     void updateGoldDisplay(int gold);
     void updateHealthDisplay(int health);

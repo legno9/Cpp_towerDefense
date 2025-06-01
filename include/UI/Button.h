@@ -16,7 +16,7 @@ public:
     ~Button() override;
 
     void update(uint32_t deltaMiliseconds, const sf::Vector2f mousePos);
-    void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
+    bool handleEvent(const sf::Event& event, const sf::RenderWindow& window);
     void setCallback(std::function<void()> callback) { m_callback = std::move(callback); }
     bool contains(const sf::Vector2f& mousePos) const;
 
@@ -33,6 +33,7 @@ protected:
 
     bool m_isHovered {false};
     bool m_isPressed {false}; 
+    bool m_interacted {false};
 
     sf::Color m_normalColor {sf::Color(255, 255, 255, 255)};
     sf::Color m_hoverColor {sf::Color(255, 255, 255, 255)};

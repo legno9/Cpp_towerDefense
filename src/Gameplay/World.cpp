@@ -55,7 +55,7 @@ void World::loadLevelIndex(const std::string& indexFilePath)
 bool World::loadLevel(const std::string& levelId)
 {
     m_currentLevel.reset();
-
+    
     auto it = m_levelPaths.find(levelId);
     if (it == m_levelPaths.end()) 
 	{
@@ -106,7 +106,7 @@ void World::update(uint32_t deltaMilliseconds)
     }
 }
 
-bool World::isLevelCompleted() const///////////////
+bool World::isLevelCompleted() const
 {
     if (m_currentLevel) 
 	{

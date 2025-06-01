@@ -48,6 +48,7 @@ Level::Level()
 
 Level::~Level()
 {
+    GameObjectManager::getInstance().removeAllGameObjects();
     if (m_layerZero) RenderManager::getInstance().removeFromRenderQueue(*m_layerZero, ZOrder::Background);
     if (m_layerOne) RenderManager::getInstance().removeFromRenderQueue(*m_layerOne, ZOrder::Background);
     if (m_layerTwo) RenderManager::getInstance().removeFromRenderQueue(*m_layerTwo, ZOrder::Background);
@@ -201,6 +202,7 @@ void Level::update(uint32_t deltaMilliseconds)
         {
             currentWave.currentSpawnGroupIndex++;
             currentSpawnGroup.currentSpawnTimer = 0.0f;
+            
             return;
         }
 
