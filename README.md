@@ -30,6 +30,57 @@ This is a **2D Tower Defense game** developed in C++ using the SFML multimedia l
     * On a buildable tile to Place, upgrade or sell a turret depending on the previous action selected.
 * **Mouse Movement:** Controls a tile indicator to show potential tower placement.
 
+## Game Entities Summary
+
+### 🏰 Turrets
+
+#### 🔥 Area Damage Turret
+- **Buy**: 100 gold
+- **Sell**: 50 gold
+- **Upgrade**: 100 gold per level
+- **Stats per Level**:
+  - Level 1: 15 dmg, 100 range, 3.0s rate
+  - Level 2: 20 dmg, 140 range, 2.0s rate
+  - Level 3: 30 dmg, 200 range, 2.0s rate
+
+#### 🧪 Shooter Turret -> Single target damage
+- **Buy**: 100 gold
+- **Sell**: 50 gold
+- **Upgrade**: 100 gold per level
+- **Stats per Level**:
+  - Level 1: 20 dmg, 150 range, 2.0s rate
+  - Level 2: 15 dmg, 170 range, 1.5s rate
+  - Level 3: 25 dmg, 200 range, 1.0s rate
+
+#### ❄️ Slowness Turret
+- **Buy**: 50 gold
+- **Sell**: 25 gold
+- **Upgrade**: 50 gold per level
+- **Stats per Level**:
+  - Level 1: 0 dmg, 150 range, 6.0s rate
+  - Level 2: 0 dmg, 170 range, 4.5s rate
+  - Level 3: 0 dmg, 200 range, 2.0s rate
+
+---
+
+### 👾 Enemies
+
+#### 🧟 Basic Enemy
+- **Health**: 100  
+- **Speed**: 50  
+- **Gold Value**: 10  
+
+#### ⚡ Fast Enemy
+- **Health**: 40  
+- **Speed**: 100  
+- **Gold Value**: 10  
+
+#### 👻 Invisible Enemy -> Untargetable until damaged.
+- **Health**: 200  
+- **Speed**: 25  
+- **Gold Value**: 10  
+
+
 ## Main Technical Challenges & Solutions
 
 ### 1. Robust Object Lifecycle Management
