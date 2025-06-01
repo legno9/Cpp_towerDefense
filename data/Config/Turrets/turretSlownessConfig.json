@@ -3,6 +3,7 @@
   "sellPrice": 25,
   "upgradePrice": 50,
   "animationDataPath": "./data/Animations/Turrets/turretSlownessAnim.json",
+  "iconPath": "./data/User Interface/texturebutton_tower_smoke_normal.png",
   "spriteScale": 1.5,
   "projectileType": "SlownessProjectile",
   "projectileConfigPath": "./data/Config/Turrets/Projectiles/slownessProjectileConfig.json",

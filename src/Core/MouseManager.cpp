@@ -8,6 +8,7 @@
 #include <Core/RenderManager.h>
 #include <Render/SFMLOrthogonalLayer.h>
 #include <Utils/Common.h>
+#include <UI/HUDManager.h>
 
 
 MouseManager::MouseManager(sf::RenderWindow& window, GameManager& gameManager, Player& player)
@@ -71,6 +72,8 @@ void MouseManager::update()
 		{
 			isLeftClicked = true;
 		}
+
+        HUDManager::getInstance().handleEvent(event, m_window);
 	}
     
     m_pos = sf::Mouse::getPosition(m_window);
@@ -92,18 +95,11 @@ void MouseManager::update()
     {
         sf::Vector2f worldTilePosition (tileCoordinates.x * m_currentTileSize.x, tileCoordinates.y * m_currentTileSize.y);
         m_tileIndicator->setPosition(worldTilePosition);
-        sf::Vector2f wordlTileCenter = worldTilePosition + sf::Vector2f(m_currentTileSize.x / 2.0f, m_currentTileSize.y / 2.0f);
-        
+        m_mouseTilePos = sf::Vector2f(worldTilePosition + sf::Vector2f(m_currentTileSize.x / 2.0f, m_currentTileSize.y / 2.0f));
+
         if (isLeftClicked)
         {
-            if (!m_gameManager.isTurretCreated(wordlTileCenter))
-            {
-                m_gameManager.createTurret(wordlTileCenter, GameObjectType::AreaDamageTurret);
-            }
-            else
-            {
-                m_gameManager.upgradeTurret(wordlTileCenter);
-            }
+            m_gameManager.onTileClicked(m_mouseTilePos);
         }
     }
     else

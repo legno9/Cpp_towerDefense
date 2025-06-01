@@ -30,6 +30,9 @@ class MouseManager
 
         bool isMouseOnWindow() const;
 
+        sf::Vector2f getMousePosition() const { return m_worldPos; }
+        sf::Vector2f getMouseTilePosition() const { return m_mouseTilePos; }
+
     private:
         static constexpr unsigned int m_nullTileID{ 0 };
 
@@ -44,6 +47,7 @@ class MouseManager
         sf::Vector2f m_worldPos { 0.f, 0.f };
         sf::Vector2i m_pos{ 0, 0 };
         sf::Vector2u m_currentTileSize{ 0u, 0u };
+        sf::Vector2f m_mouseTilePos { 0.f, 0.f };
 
         sf::Color m_fillIndicatorColor{ 215, 215, 215,  200};
         sf::Color m_outlineIndicatorColor{ 44, 44, 44,  200};

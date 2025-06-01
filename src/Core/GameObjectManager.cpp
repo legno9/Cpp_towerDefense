@@ -46,10 +46,14 @@ void GameObjectManager::registerTurretsPrices(GameObjectType type, const std::st
     int buyPrice = JsonManager::getInstance().getInt(turretJson, "buyPrice");
     int sellPrice = JsonManager::getInstance().getInt(turretJson, "sellPrice");
     int upgradePrice = JsonManager::getInstance().getInt(turretJson, "upgradePrice");
+    std::string iconPath = JsonManager::getInstance().getString(turretJson, "iconPath");
 
+    m_turretConfigPaths[type] = configPath;
     m_turretBuyPrices[type] = buyPrice;
     m_turretSellPrices[type] = sellPrice;
     m_turretUpgradePrices[type] = upgradePrice;
+    m_buildableTurrets[type] = iconPath;
+    
 }
 
 void GameObjectManager::updateGameObjects(uint32_t deltaMiliseconds)

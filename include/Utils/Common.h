@@ -27,4 +27,12 @@ enum class Direction : uint8_t
     None
 };
 
+enum class PlayerActionState: uint8_t
+{
+    None,            
+    PlacingTower,    
+    UpgradingTower,  
+    SellingTower    
+};
+
 GameObjectType stringToGameObjectType(const std::string& typeStr);

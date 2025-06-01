@@ -4,9 +4,11 @@
 #include <unordered_map>
 #include <memory>
 
+
 namespace sf
 {
 	class Texture;
+	class Font;
 }
 
 class AssetManager
@@ -20,6 +22,13 @@ class AssetManager
 
 		void unloadTexture(const std::string& assetPath);
 
+		sf::Font& loadFont(const std::string& fontPath);
+		sf::Font& getFont(const std::string& fontPath) const;
+
+		void unloadFont(const std::string& fontPath);
+
+		sf::Font& getDefaultFont();
+
 	private:
 
 		AssetManager() = default;
@@ -28,5 +37,6 @@ class AssetManager
 		AssetManager(const AssetManager&) = delete;
 		AssetManager& operator=(const AssetManager&) = delete;
 
-		std::unordered_map<std::string, std::unique_ptr<sf::Texture>> m_texturePathToTexture;
+		std::unordered_map<std::string, std::unique_ptr<sf::Texture>> m_texturePathToTexture {};
+		std::unordered_map<std::string, std::unique_ptr<sf::Font>> m_loadedFonts {};
 };

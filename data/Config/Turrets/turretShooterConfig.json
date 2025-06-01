@@ -3,6 +3,7 @@
   "sellPrice": 50,
   "upgradePrice": 100,
   "animationDataPath": "./data/Animations/Turrets/turretShooterAnim.json",
+  "iconPath": "./data/User Interface/texturebutton_tower_poison_normal.png",
   "spriteScale": 1.5,
   "projectileType": "ShooterProjectile",
   "projectileConfigPath": "./data/Config/Turrets/Projectiles/shooterProjectileConfig.json",

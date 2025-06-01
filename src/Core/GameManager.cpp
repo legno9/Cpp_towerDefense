@@ -9,25 +9,28 @@
 #include <Gameplay/World.h>
 #include <Gameplay/Player.h>
 #include <Gameplay/Turrets/TurretBase.h>
-
+#include <UI/HUDManager.h>
 
 GameManager::GameManager() = default;
 
 GameManager::~GameManager()
 {
-    if (m_mouseManager)
-    {
-        m_mouseManager->setTowerLayer(nullptr);
-        m_mouseManager.reset();
-    }
+    GameObjectManager::getInstance().removeAllGameObjects();
 
     if (m_world)
     {
         m_world->unloadCurrentLevel();
         m_world.reset();
     }
+
+    if (m_mouseManager)
+    {
+        m_mouseManager->setTowerLayer(nullptr);
+        m_mouseManager.reset();
+    }
+
+    HUDManager::removeInstance();
     
-    GameObjectManager::getInstance().removeAllGameObjects();
     RenderManager::removeInstance();
 };
 
@@ -53,6 +56,21 @@ bool GameManager::init(const std::string& configPath)
     int startingGold = JsonManager::getInstance().getInt(configJson, "startingGold");
     int startingHealth = JsonManager::getInstance().getInt(configJson, "startingHealth");
 
+	m_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(createInfo.screenWidth, createInfo.screenHeight), createInfo.gameTitle);
+	m_window->setFramerateLimit(createInfo.frameRateLimit);
+	
+	HWND hWnd = m_window->getSystemHandle();
+	if (hWnd)
+    {
+        ShowWindow(hWnd, SW_MAXIMIZE);
+    }
+	
+	RenderManager::initialize(*m_window);
+    m_player = std::make_unique<Player>(startingHealth, startingGold); 
+	m_mouseManager = std::make_unique<MouseManager>(*m_window, *this , *m_player);
+	m_world = std::make_unique<World>();
+    GameObjectManager::getInstance().setPlayer(m_player.get());
+
     if (configJson.contains("turrets") && configJson["turrets"].is_array()) 
     {
         for (const auto& turretEntry : configJson["turrets"]) 
@@ -75,57 +93,27 @@ bool GameManager::init(const std::string& configPath)
         std::cerr << "ERROR: 'buildableTurrets' array not found in buildable_turrets.json." << std::endl;
     }
 
-
-	m_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(createInfo.screenWidth, createInfo.screenHeight), createInfo.gameTitle);
-	m_window->setFramerateLimit(createInfo.frameRateLimit);
-	
-	HWND hWnd = m_window->getSystemHandle();
-	if (hWnd)
+	if (!m_world->loadFirstLevel()) 
     {
-        ShowWindow(hWnd, SW_MAXIMIZE);
-    }
-	
-	RenderManager::initialize(*m_window);
-	m_mouseManager = std::make_unique<MouseManager>(*m_window, *this , *m_player);
-	m_world = std::make_unique<World>();
-    m_player = std::make_unique<Player>(startingHealth, startingGold); 
-    GameObjectManager::getInstance().setPlayer(m_player.get());
-
-	bool loadOk = false;
-    if (m_world) 
-	{
-        loadOk = m_world->loadFirstLevel();
-        if (!loadOk) 
-		{
-            std::cerr << "FATAL ERROR: Failed to load initial level. Exiting." << std::endl;
-            return false;
-        }
-    } 
-	else 
-	{
-        std::cerr << "FATAL ERROR: World manager not initialized." << std::endl;
+        std::cerr << "FATAL ERROR: Failed to load initial level. Exiting." << std::endl;
         return false;
     }
 
     if (m_mouseManager && m_world->getCurrentLevel()) 
-	{
+    {
         MapLayer* towerLayer = m_world->getCurrentLevel()->getTowerLayer();
-        if (towerLayer) 
-		{
-            m_mouseManager->setTowerLayer(towerLayer);
-        } 
-		else 
-		{
-            std::cerr << "ERROR: Failed to get tower layer from current level." << std::endl;
-            return false;
-        }
+        if (towerLayer) { m_mouseManager->setTowerLayer(towerLayer); }
+        else { std::cerr << "ERROR: Failed to get tower layer from current level." << std::endl; return false; }
     } 
-	else 
-	{
-        std::cerr << "ERROR: MouseManager or current Level not initialized to set tower layer." << std::endl;
-        return false;
+    else 
+    { 
+        std::cerr << "ERROR: MouseManager or current Level not initialized to set tower layer." << std::endl; return false; 
     }
-    
+
+    HUDManager::initialize(*this);
+    HUDManager::getInstance().updateGoldDisplay(m_player->getGold());
+    HUDManager::getInstance().updateHealthDisplay(m_player->getCurrentHealth());
+
     return true;
 }
 
@@ -139,8 +127,10 @@ void GameManager::update(uint32_t deltaMilliseconds)
 	assert(m_window != nullptr && m_world != nullptr && m_mouseManager != nullptr && "Game::update() window, world or mouseManager is nullptr");
 
 	m_mouseManager->update();
+    HUDManager::getInstance().update(deltaMilliseconds, m_mouseManager->getMousePosition());
 	m_world->update(deltaMilliseconds);
 	GameObjectManager::getInstance().updateGameObjects(deltaMilliseconds);
+    
 }
 
 void GameManager::render()
@@ -159,39 +149,39 @@ void GameManager::startWaves()
 }
 
 
-void GameManager::createTurret(sf::Vector2f tileCoordinates, GameObjectType turretType)
+void GameManager::createTurret(GameObjectType turretType, const sf::Vector2f& tileCoordinates)
 {
     if (GameObjectManager::getInstance().getTurretBuyPrice(turretType) > m_player->getGold())
     {
-        std::cerr << "ERROR: Not enough gold to create turret at position: " << tileCoordinates.x << ", " << tileCoordinates.y << std::endl;
+        std::cerr << "ERROR: Not enough gold to create turret."<< std::endl;
         return;
     }
 
     m_player->reduceGold(GameObjectManager::getInstance().getTurretBuyPrice(turretType));
-	GameObjectManager::getInstance().spawnTurret(turretType, tileCoordinates);
+	GameObjectManager::getInstance().spawnTurret(turretType, m_mouseManager->getMouseTilePosition());
     
 	startWaves();
 }
 
-void GameManager::upgradeTurret(sf::Vector2f tileCoordinates)
+void GameManager::upgradeTurret(const sf::Vector2f& tileCoordinates)
 {
-    TurretBase* turret = GameObjectManager::getInstance().getTurretByPos(tileCoordinates);
+    TurretBase* turret = GameObjectManager::getInstance().getTurretByPos(m_mouseManager->getMouseTilePosition());
 
     if (!turret)
     {
-        std::cerr << "ERROR: No turret found at position: " << tileCoordinates.x << ", " << tileCoordinates.y << std::endl;
+        std::cerr << "ERROR: No turret found " << std::endl;
         return;
     }
 
     if (turret->isMarkedForRemoval())
     {
-        std::cerr << "ERROR: Turret at position: " << tileCoordinates.x << ", " << tileCoordinates.y << " is marked for removal." << std::endl;
+        std::cerr << "ERROR: Turret is marked for removal." << std::endl;
         return;
     }
 
     if (turret->isMaxLevel())
     {
-        std::cerr << "ERROR: Turret at position: " << tileCoordinates.x << ", " << tileCoordinates.y << " is already at max level." << std::endl;
+        std::cerr << "ERROR: Turret at position is already at max level." << std::endl;
         return;
     }
 
@@ -200,7 +190,7 @@ void GameManager::upgradeTurret(sf::Vector2f tileCoordinates)
 
     if (upgradePrice > m_player->getGold())
     {
-        std::cerr << "ERROR: Not enough gold to upgrade turret at position: " << tileCoordinates.x << ", " << tileCoordinates.y << std::endl;
+        std::cerr << "ERROR: Not enough gold to upgrade turret "<< std::endl;
         return;
     }
 
@@ -208,9 +198,9 @@ void GameManager::upgradeTurret(sf::Vector2f tileCoordinates)
     m_player->reduceGold(upgradePrice);
 }
 
-void GameManager::sellTurret(sf::Vector2f tileCoordinates)
+void GameManager::sellTurret(const sf::Vector2f& tileCoordinates)
 {
-    TurretBase* turret = GameObjectManager::getInstance().getTurretByPos(tileCoordinates);
+    TurretBase* turret = GameObjectManager::getInstance().getTurretByPos(m_mouseManager->getMouseTilePosition());
     
     if (turret)
     {
@@ -222,12 +212,66 @@ void GameManager::sellTurret(sf::Vector2f tileCoordinates)
     }
     else
     {
-        std::cerr << "ERROR: No turret found at position: " << tileCoordinates.x << ", " << tileCoordinates.y << std::endl;
+        std::cerr << "ERROR: No turret found at mouse position"<< std::endl;
     }
 }
 
-bool GameManager::isTurretCreated(sf::Vector2f tileCoordinates) const
+void GameManager::setPlayerActionState(PlayerActionState state, GameObjectType turretType)
+{
+    m_playerActionState = state;
+
+    if (state == PlayerActionState::PlacingTower)
+    {
+        if (turretType == GameObjectType::None)
+        {
+            std::cerr << "ERROR: Cannot create turret without specifying type." << std::endl;
+            return;
+        }
+
+        m_selectedTowerType = turretType;
+    }
+}
+
+bool GameManager::isTurretCreated(const sf::Vector2f& tileCoordinates) const
 {
     TurretBase* turret = GameObjectManager::getInstance().getTurretByPos(tileCoordinates);
     return turret != nullptr;
+}
+
+void GameManager::onTileClicked(const sf::Vector2f& tileCoordinates)
+{
+    if (m_playerActionState == PlayerActionState::PlacingTower)
+    {
+        if (m_selectedTowerType == GameObjectType::None)
+        {
+            std::cerr << "ERROR: No turret type selected for placement." << std::endl;
+            return;
+        }
+
+        if( isTurretCreated(tileCoordinates))
+        {
+            std::cerr << "ERROR: Turret already exists at tile coordinates." << std::endl;
+            return;
+        }
+
+        createTurret(m_selectedTowerType, tileCoordinates);
+    }
+    else if (m_playerActionState == PlayerActionState::UpgradingTower)
+    {
+        if (!isTurretCreated(tileCoordinates))
+        {
+            std::cerr << "ERROR: No turret found at tile coordinates for upgrade." << std::endl;
+            return;
+        }
+        upgradeTurret(tileCoordinates);
+    }
+    else if (m_playerActionState == PlayerActionState::SellingTower)
+    {
+        if (!isTurretCreated(tileCoordinates))
+        {
+            std::cerr << "ERROR: No turret found at tile coordinates for selling." << std::endl;
+            return;
+        }
+        sellTurret(tileCoordinates);
+    }
 }

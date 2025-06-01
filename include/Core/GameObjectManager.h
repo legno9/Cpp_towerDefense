@@ -40,6 +40,8 @@ class GameObjectManager
 		int getTurretSellPrice(GameObjectType type) const;
 		int getTurretUpgradePrice(GameObjectType type) const;
 
+		std::unordered_map<GameObjectType, std::string> getBuildableTurrets() const { return m_buildableTurrets; }
+
 		void setPlayer(Player* player);
 		Player* getPlayer() const { return m_player; }
 
@@ -55,9 +57,12 @@ class GameObjectManager
 		std::vector<std::unique_ptr<GameObject>> m_pendingGameObjects {};
 
 		std::unordered_map<unsigned int, GameObject*> m_idToObjectMap{};
-		std::map<GameObjectType, int> m_turretBuyPrices {};
-		std::map<GameObjectType, int> m_turretSellPrices {};
-		std::map<GameObjectType, int> m_turretUpgradePrices {};
+		std::unordered_map<GameObjectType, int> m_turretBuyPrices {};
+		std::unordered_map<GameObjectType, int> m_turretSellPrices {};
+		std::unordered_map<GameObjectType, int> m_turretUpgradePrices {};
+		std::unordered_map<GameObjectType, std::string> m_turretConfigPaths {};
+		std::unordered_map<GameObjectType, std::string> m_buildableTurrets {};
+		
 
 		unsigned int m_nextId{0};
 			

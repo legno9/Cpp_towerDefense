@@ -3,6 +3,7 @@
   "sellPrice": 50,
   "upgradePrice": 100,
   "animationDataPath": "./data/Animations/Turrets/turretAreaDamageAnim.json",
+  "iconPath": "./data/User Interface/texturebutton_tower_gun_normal.png",
   "spriteScale": 1.5,
   "projectileType": "AreaDamageProjectile",
   "projectileConfigPath": "./data/Config/Turrets/Projectiles/areaDamageProjectileConfig.json",

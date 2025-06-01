@@ -55,9 +55,12 @@ set(PROJECT_HEADERS
     include/Gameplay/Turrets/Projectiles/ProjectileSlowness.h
     include/Gameplay/Turrets/Projectiles/ProjectileAreaDamage.h
 
-    include/Render/SFMLOrthogonalLayer.h
+    include/UI/HUDManager.h
+    include/UI/Button.h
+    include/UI/TextLabel.h
+    include/UI/TowerSelectorUI.h
 
-    include/UI/UIScreenMainMenu.h
+    include/Render/SFMLOrthogonalLayer.h
 )
 
 set(PROJECT_SOURCES 
@@ -90,6 +93,11 @@ set(PROJECT_SOURCES
     src/Gameplay/Turrets/Projectiles/ProjectileShooter.cpp
     src/Gameplay/Turrets/Projectiles/ProjectileSlowness.cpp
     src/Gameplay/Turrets/Projectiles/ProjectileAreaDamage.cpp
+
+    src/UI/HUDManager.cpp
+    src/UI/Button.cpp
+    src/UI/TextLabel.cpp
+    src/UI/TowerSelectorUI.cpp
 
     src/Utils/Common.cpp
 
