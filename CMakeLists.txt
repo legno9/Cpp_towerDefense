@@ -133,9 +133,8 @@ endif()
 
 # TO-DO 
 
-# - Smokebomb 
-
 # - Sistema de interfaz de usuario con botones para comprar torres y mejorarlas.
+
 # - Pantalla de inicio, pausa, fin de juego.
 
 # - Montar niveles

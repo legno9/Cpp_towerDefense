@@ -34,6 +34,7 @@ void Player::receiveDamage(int amount)
         if (m_currentHealth < 0) 
         {
             m_currentHealth = 0;
+            //Lose
         }
     }
 }

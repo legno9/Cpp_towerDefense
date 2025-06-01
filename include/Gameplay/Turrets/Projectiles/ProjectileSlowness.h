@@ -3,6 +3,11 @@
 #include <Gameplay/Turrets/Projectiles/ProjectileBase.h>
 #include <string>
 
+namespace sf 
+{
+    class CircleShape;
+}
+
 class ProjectileSlowness : public ProjectileBase
 {
 public:
@@ -10,7 +15,7 @@ public:
     ProjectileSlowness(const sf::Vector2f& spawnPosition, const std::string& configPath, 
         unsigned int targetEnemyId, float damageFromTurret);
 
-    ~ProjectileSlowness() override = default;
+    ~ProjectileSlowness() override;
 
     void move(uint32_t deltaTime) override; 
     void hit() override;    
@@ -29,4 +34,6 @@ protected:
 
     unsigned int m_targetEnemyId {0};
     sf::Vector2f m_fixedTargetPosition {0.0f, 0.0f};
+
+    std::unique_ptr<sf::CircleShape> m_areaOfEffectShape {nullptr}; //Temporal visualization of the area of effect
 };

@@ -2,7 +2,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <Core/JsonManager.h>
+#include <Core/RenderManager.h>
 #include <Core/GameObjectManager.h>
 #include <Gameplay/Enemies/EnemyBase.h>
 
@@ -32,6 +34,23 @@ ProjectileAreaDamage::ProjectileAreaDamage(const sf::Vector2f& spawnPosition, co
     }
 
     m_fixedTargetPosition = targetEnemy->getPosition();
+
+    m_areaOfEffectShape = std::make_unique<sf::CircleShape>(m_areaOfEffectRadius);
+    m_areaOfEffectShape->setFillColor(sf::Color(255, 100, 0, 100));
+    m_areaOfEffectShape->setOutlineThickness(3);
+    m_areaOfEffectShape->setOutlineColor(sf::Color(255, 0, 0, 200));
+    m_areaOfEffectShape->setOrigin(m_areaOfEffectRadius, m_areaOfEffectRadius);
+    m_areaOfEffectShape->setPosition(m_position);
+    
+    RenderManager::getInstance().addToRenderQueue(*m_areaOfEffectShape, ZOrder::Foreground);
+}
+
+ProjectileAreaDamage::~ProjectileAreaDamage()
+{
+    if (m_areaOfEffectShape) 
+    {
+        RenderManager::getInstance().removeFromRenderQueue(*m_areaOfEffectShape, ZOrder::Foreground);
+    }
 }
 
 void ProjectileAreaDamage::move(uint32_t deltaMilliseconds)
@@ -52,6 +71,7 @@ void ProjectileAreaDamage::move(uint32_t deltaMilliseconds)
 
     sf::Vector2f normalizedDirection = vectorToTarget / distanceToTarget;
     m_position += normalizedDirection * m_speed * deltaSeconds;
+    m_areaOfEffectShape->setPosition(m_position);
 }
 
 void ProjectileAreaDamage::hit()

@@ -2,7 +2,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <Core/JsonManager.h>
+#include <Core/RenderManager.h>
 #include <Core/GameObjectManager.h>
 #include <Gameplay/Enemies/EnemyBase.h>
 
@@ -35,8 +37,21 @@ ProjectileSlowness::ProjectileSlowness(const sf::Vector2f& spawnPosition, const 
     }
 
     m_fixedTargetPosition = targetEnemy->getPosition();
+
+    m_areaOfEffectShape = std::make_unique<sf::CircleShape>(m_areaOfEffectRadius);
+    m_areaOfEffectShape->setFillColor(sf::Color(25, 25, 25, 50));
+    m_areaOfEffectShape->setOutlineThickness(2);
+    m_areaOfEffectShape->setOutlineColor(sf::Color(25, 25, 25, 150));
+    m_areaOfEffectShape->setOrigin(m_areaOfEffectRadius, m_areaOfEffectRadius);
 }
 
+ProjectileSlowness::~ProjectileSlowness()
+{
+    if (m_areaOfEffectShape) 
+    {
+        RenderManager::getInstance().removeFromRenderQueue(*m_areaOfEffectShape, ZOrder::Foreground);
+    }
+}
 void ProjectileSlowness::update(uint32_t deltaMilliseconds)
 {
     ProjectileBase::update(deltaMilliseconds);
@@ -69,6 +84,8 @@ void ProjectileSlowness::move(uint32_t deltaMilliseconds)
     {
         m_position = m_fixedTargetPosition;
         m_reachedTarget = true;
+        m_areaOfEffectShape->setPosition(m_fixedTargetPosition);
+        RenderManager::getInstance().addToRenderQueue(*m_areaOfEffectShape, ZOrder::Foreground);
         return;
     }
 
